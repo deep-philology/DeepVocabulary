@@ -1,4 +1,6 @@
-# deep_vocabulary
+<img src="https://raw.githubusercontent.com/deep-reader/DeepReader/master/static/deep-reader-512.png" height=64 width=64>
+
+# DeepVocabulary
 
 ## Getting Started
 
