@@ -2,6 +2,13 @@
 
 # DeepVocabulary
 
+This will primarily be a server that:
+
+* models text tokens and lemmatisation mapped to glosses
+* provides both API-based and HTML-based way of retrieving vocabulary lists for particular texts
+
+See [overview](https://github.com/eldarion-client/DeepVocabulary/wiki/Overview).
+
 ## Getting Started
 
 Make sure you are using a virtual environment of some sort (e.g. `virtualenv` or
