@@ -1,0 +1,28 @@
+.lemma-entry {
+  h1 {
+    display: block;
+    .pk {
+      color: $gray-500;
+      font-family: 'Noto Sans';
+    }
+    .text {
+      font-weight: bold;
+      font-family: 'Noto Serif';
+    }
+  }
+  .definition {
+    margin-top: 1em;
+    .shortdef {
+      font-family: 'Noto Serif';
+      font-size: 16pt;
+      line-height: 24pt;
+      font-style: italic;
+    }
+    .source {
+      font-family: 'Noto Sans';
+      color: $gray-500;
+      font-size: 10pt;
+      line-height: 6pt;
+    }
+  }
+}
