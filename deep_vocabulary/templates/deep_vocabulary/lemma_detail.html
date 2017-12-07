@@ -11,5 +11,15 @@
         </div>
       {% endfor %}
     </div>
+
+    <h4>Passages ({{ object.passages.count }})</h4>
+    {% if object.passages.count < 20 %}
+      {% for lemma_passage in object.passages.all %}
+        <div>
+          <span class="badge badge-dark">{{ lemma_passage.count }}</span>
+          {{ lemma_passage.text_edition.cts_urn }}:{{ lemma_passage.reference }}
+        </div>
+      {% endfor %}
+    {% endif %}
   </div>
 {% endblock %}
