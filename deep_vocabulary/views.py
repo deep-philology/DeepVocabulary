@@ -31,6 +31,7 @@ def word_list_by_work(request, cts_urn):
         Lemma.objects.filter(
             pk__in=passage_lemmas.keys()).values_list(
                 "pk", "text"))
+    total = sum(passage_lemmas.values())
     vocabulary = sorted(
         [
             {
@@ -38,6 +39,7 @@ def word_list_by_work(request, cts_urn):
                 "lemma_text": lemma_text[lemma_id],
                 "shortdef": definitions[lemma_id],
                 "count": passage_lemmas[lemma_id],
+                "frequency": int(1000000 * passage_lemmas[lemma_id] / total) / 10,
             }
         for lemma_id in passage_lemmas.keys()
         ], key=itemgetter("count"), reverse=True

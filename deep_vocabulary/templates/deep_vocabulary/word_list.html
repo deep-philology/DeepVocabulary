@@ -4,11 +4,17 @@
   <h1>{{ text_edition.cts_urn }}</h1>
 
   <table class="word-list table table-sm table-striped">
+    <thead>
+      <tr>
+        <th>word<th>shortdef<th class="text-right">count<th class="text-right">frequency
+      </tr>
+    </thead>
     {% for item in vocabulary %}
       <tr>
         <th class="lemma_text">{{ item.lemma_text }}
         <td class="shortdef">{{ item.shortdef }}
         <td class="count">{{ item.count }}
+        <td class="frequency">{{ item.frequency }}
       </tr>
     {% endfor %}
   </table>
