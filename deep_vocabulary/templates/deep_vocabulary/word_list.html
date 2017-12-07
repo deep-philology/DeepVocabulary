@@ -1,0 +1,15 @@
+{% extends "site_base.html" %}
+
+{% block body %}
+  <h1>{{ text_edition.cts_urn }}</h1>
+
+  <table class="word-list table table-sm table-striped">
+    {% for item in vocabulary %}
+      <tr>
+        <th class="lemma_text">{{ item.lemma_text }}
+        <td class="shortdef">{{ item.shortdef }}
+        <td class="count">{{ item.count }}
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

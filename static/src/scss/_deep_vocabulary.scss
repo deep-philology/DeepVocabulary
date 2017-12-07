@@ -26,3 +26,18 @@
     }
   }
 }
+
+.word-list {
+  .lemma_text {
+    font-weight: bold;
+    font-family: 'Noto Serif';
+  }
+  .shortdef {
+    font-family: 'Noto Serif';
+    font-size: 12pt;
+    font-style: italic;
+  }
+  .count {
+    font-family: 'Noto Sans';
+  }
+}
