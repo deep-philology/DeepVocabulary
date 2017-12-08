@@ -1,3 +1,7 @@
+body {
+  font-family: 'Noto Sans';
+}
+
 .lemma-entry {
   h1 {
     display: block;
@@ -45,4 +49,32 @@
     font-family: 'Noto Sans';
     text-align: right;
   }
+}
+
+section.hero {
+  background: $perseus-red;
+  color: $white;
+  padding: 20px 0;
+  margin-bottom: 20px;
+
+  h1 {
+    font-family: 'Noto Serif';
+    font-size: 48px;
+    font-style: italic;
+  }
+
+  h2 {
+    font-family: 'Noto Serif';
+    font-size: 28px;
+    margin: 0;
+    a {
+      color: lighten($perseus-red, 30%);
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+}
+section.main {
+  padding: 1em 0;
 }

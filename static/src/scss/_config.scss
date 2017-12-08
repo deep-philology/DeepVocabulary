@@ -3,9 +3,7 @@
 // Font Awesome
 $fa-font-path: "//netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts";
 
-// Set Font Face to Roboto
-@import url(https://fonts.googleapis.com/css?family=Roboto:300,400,700);
-$font-family-sans-serif: "Roboto", "Helvetica", 'Helvetica Neue', Helvetica, sans-serif;
+$perseus-red: #B45141;
 
 $footer-bg-color: #FAFAFA;
 
@@ -36,7 +34,7 @@ $green:   #28a745;
 $teal:    #20c997;
 $cyan:    #17a2b8;
 
-$primary:   $blue;
+$primary:   $perseus-red;
 $secondary: $gray-600;
 $success:   $green;
 $info:      $cyan;
@@ -44,4 +42,3 @@ $warning:   $yellow;
 $danger:    $red;
 $light:     $gray-100;
 $dark:      $gray-800;
-
