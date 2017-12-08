@@ -7,9 +7,11 @@ from django.db.models import Q, Sum
 from .models import Lemma, TextEdition, PassageLemma, Definition
 
 
-class LemmaDetail(DetailView):
-
-    model = Lemma
+def lemma_detail(request, pk):
+    lemma = get_object_or_404(Lemma, pk=pk)
+    return render(request, "deep_vocabulary/lemma_detail.html", {
+        "object": lemma,
+    })
 
 
 def lemma_by_text(request, text):
