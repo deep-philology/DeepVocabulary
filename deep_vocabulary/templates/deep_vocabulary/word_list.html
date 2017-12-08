@@ -3,10 +3,8 @@
 {% block body_base %}
   <section class="hero">
     <div class="container">
-      <h2 class="text-group">{{ text_edition.text_group_label }}</h2>
-      <h1 class="work">
-        {{ text_edition.work_label }} {% if ref_prefix %}{{ ref_prefix }}{% endif %}
-      </h1>
+      <h2>{{ text_edition.text_group_label }}, {{ text_edition.work_label }} {% if ref_prefix %}{{ ref_prefix }}{% endif %}</h2>
+      <h1>Word List</h1>
     </div>
   </section>
 
