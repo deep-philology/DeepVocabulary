@@ -1,24 +1,32 @@
 {% extends "site_base.html" %}
 
-{% block body %}
-  <h1>{{ text_edition.cts_urn }}</h1>
-  {% if ref_prefix %}
-    <h2>{{ ref_prefix }}</h2>
-  {% endif %}
+{% block body_base %}
+  <section class="hero">
+    <div class="container">
+      <h2 class="text-group">{{ text_edition.text_group_label }}</h2>
+      <h1 class="work">
+        {{ text_edition.work_label }} {% if ref_prefix %}{{ ref_prefix }}{% endif %}
+      </h1>
+    </div>
+  </section>
 
-  <table class="word-list table table-sm table-striped">
-    <thead>
-      <tr>
-        <th>word<th>shortdef<th class="text-right">count<th class="text-right">frequency
-      </tr>
-    </thead>
-    {% for item in vocabulary %}
-      <tr>
-        <th class="lemma_text">{{ item.lemma_text }}
-        <td class="shortdef">{{ item.shortdef }}
-        <td class="count">{{ item.count }}
-        <td class="frequency">{{ item.frequency }}
-      </tr>
-    {% endfor %}
-  </table>
+  <section class="main">
+    <div class="container">
+      <table class="word-list table table-sm table-striped">
+        <thead>
+          <tr>
+            <th>word<th>shortdef<th class="text-right">count<th class="text-right">frequency
+          </tr>
+        </thead>
+        {% for item in vocabulary %}
+          <tr>
+            <th class="lemma_text">{{ item.lemma_text }}
+            <td class="shortdef">{{ item.shortdef }}
+            <td class="count">{{ item.count }}
+            <td class="frequency">{{ item.frequency }}
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </section>
 {% endblock %}

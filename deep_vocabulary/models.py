@@ -1,5 +1,5 @@
 from django.db import models
-
+from .greeklit import TEXT_GROUPS, WORKS
 
 class Lemma(models.Model):
 
@@ -15,6 +15,16 @@ class Definition(models.Model):
 
 class TextEdition(models.Model):
     cts_urn = models.CharField(max_length=250, unique=True)
+
+    def text_group_label(self):
+        parts = self.cts_urn.split(":")
+        text_group_urn = ":".join(parts[0:3]) + ":" + parts[3].split(".")[0]
+        return TEXT_GROUPS.get(text_group_urn, "unknown")
+
+    def work_label(self):
+        parts = self.cts_urn.split(":")
+        work_urn = ":".join(parts[0:3]) + ":" + ".".join(parts[3].split(".")[0:2])
+        return WORKS.get(work_urn, "unknown")
 
 
 class PassageLemma(models.Model):
