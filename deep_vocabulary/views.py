@@ -48,6 +48,7 @@ def word_list_by_work(request, cts_urn):
     return render(request, "deep_vocabulary/word_list.html", {
         "text_edition": text_edition,
         "vocabulary": vocabulary,
+        "token_total": total,
     })
 
 
@@ -90,4 +91,5 @@ def word_list_by_ref(request, cts_urn, ref_prefix):
         "text_edition": text_edition,
         "ref_prefix": ref_prefix,
         "vocabulary": vocabulary,
+        "token_total": total,
     })

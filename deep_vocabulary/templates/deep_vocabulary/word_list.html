@@ -10,6 +10,12 @@
 
   <section class="main">
     <div class="container">
+
+      <p class="lead text-right">
+        {{ vocabulary|length }} lemma{{ vocabulary|length|pluralize }};
+        {{ token_total }} token{{ token_total|pluralize }}
+      </p>
+
       <table class="word-list table table-sm table-striped">
         <thead>
           <tr>
