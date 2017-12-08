@@ -2,6 +2,9 @@
 
 {% block body %}
   <h1>{{ text_edition.cts_urn }}</h1>
+  {% if ref_prefix %}
+    <h2>{{ ref_prefix }}</h2>
+  {% endif %}
 
   <table class="word-list table table-sm table-striped">
     <thead>
