@@ -18,7 +18,7 @@
         </thead>
         {% for item in vocabulary %}
           <tr>
-            <th class="lemma_text">{{ item.lemma_text }}
+            <th class="lemma_text"><a href="{% url 'lemma_detail' item.lemma_id %}">{{ item.lemma_text }}</a>
             <td class="shortdef">{{ item.shortdef }}
             <td class="count">{{ item.count }}
             <td class="frequency">{{ item.frequency }}

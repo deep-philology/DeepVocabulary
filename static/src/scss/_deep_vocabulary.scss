@@ -35,6 +35,12 @@ body {
   .lemma_text {
     font-weight: bold;
     font-family: 'Noto Serif';
+    a {
+      color: $black;
+      &:hover {
+        color: $perseus-red;
+      }
+    }
   }
   .shortdef {
     font-family: 'Noto Serif';
