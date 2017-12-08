@@ -13,11 +13,15 @@
     </div>
 
     <h4>Passages ({{ object.passages.count }})</h4>
-    {% if object.passages.count < 20 %}
+    {% if object.passages.count < 1000 %}
       {% for lemma_passage in object.passages.all %}
         <div>
           <span class="badge badge-dark">{{ lemma_passage.count }}</span>
-          {{ lemma_passage.text_edition.cts_urn }}:{{ lemma_passage.reference }}
+          {{ lemma_passage.text_edition.text_group_label }},
+          <a href="{% url 'word_list_by_ref' lemma_passage.text_edition.cts_urn lemma_passage.reference %}">
+            <b>{{ lemma_passage.text_edition.work_label }}</b>
+            {{ lemma_passage.reference }}
+          </a>
         </div>
       {% endfor %}
     {% endif %}
