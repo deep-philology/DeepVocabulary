@@ -603,7 +603,7 @@ urn:cts:greekLit:tlg0540.tlg033|Olympic Oration
 urn:cts:greekLit:tlg0540.tlg034|Against The Subversion of the Ancestral Constitution of Athens
 urn:cts:greekLit:tlg0541|pseudo-Menander
 urn:cts:greekLit:tlg0541.tlg042|Sententiae (corresponds to version Men Ar I) (Greek)
-urn:cts:greekLit:tlg0543|Polybius.
+urn:cts:greekLit:tlg0543|Polybius
 urn:cts:greekLit:tlg0543.tlg001|Histories
 urn:cts:greekLit:tlg0544|Sextus Empiricus
 urn:cts:greekLit:tlg0544.tlg001|Pyrrhoniae Hypotyposes
@@ -639,7 +639,7 @@ urn:cts:greekLit:tlg0555.tlg005|Eclogae propheticae
 urn:cts:greekLit:tlg0555.tlg006|Quis dives salvetur
 urn:cts:greekLit:tlg0555.tlg007|Excerpta ex Theodoto
 urn:cts:greekLit:tlg0561|Longus
-urn:cts:greekLit:tlg0561.tlg001|Daphnis &amp; Chloe
+urn:cts:greekLit:tlg0561.tlg001|Daphnis and Chloe
 urn:cts:greekLit:tlg0565|Soranus
 urn:cts:greekLit:tlg0565.tlg001|Gynaeciorum Libri IV
 urn:cts:greekLit:tlg0565.tlg002|De signis Fracturarum
