@@ -9,8 +9,30 @@ from .models import Lemma, TextEdition, PassageLemma, Definition
 
 def lemma_detail(request, pk):
     lemma = get_object_or_404(Lemma, pk=pk)
+
+    x = dict(
+            lemma.passages.values_list(
+                "text_edition").annotate(total=Sum("count")))
+
+    y = TextEdition.objects.filter(pk__in=x.keys())
+    editions = [
+        {
+            "text_edition": text_edition,
+            "count": x[text_edition.pk],
+        }
+        for text_edition in y
+    ]
+    text_groups = {}
+    for edition in editions:
+        text_groups.setdefault(
+            (edition["text_edition"].text_group_urn(),
+            edition["text_edition"].text_group_label()),
+            []).append(edition)
+
     return render(request, "deep_vocabulary/lemma_detail.html", {
         "object": lemma,
+        "editions_count": len(editions),
+        "text_groups": text_groups,
     })
 
 
@@ -43,7 +65,7 @@ def word_list_by_work(request, cts_urn):
                 "count": passage_lemmas[lemma_id],
                 "frequency": int(1000000 * passage_lemmas[lemma_id] / total) / 10,
             }
-        for lemma_id in passage_lemmas.keys()
+            for lemma_id in passage_lemmas.keys()
         ], key=itemgetter("count"), reverse=True
     )
 

@@ -84,3 +84,10 @@ section.hero {
 section.main {
   padding: 1em 0;
 }
+
+div.text-group {
+  margin-top: 1.5em;
+  > div {
+    margin-left: 2em;
+  }
+}

@@ -16,10 +16,12 @@ class Definition(models.Model):
 class TextEdition(models.Model):
     cts_urn = models.CharField(max_length=250, unique=True)
 
-    def text_group_label(self):
+    def text_group_urn(self):
         parts = self.cts_urn.split(":")
-        text_group_urn = ":".join(parts[0:3]) + ":" + parts[3].split(".")[0]
-        return TEXT_GROUPS.get(text_group_urn, "unknown")
+        return ":".join(parts[0:3]) + ":" + parts[3].split(".")[0]
+
+    def text_group_label(self):
+        return TEXT_GROUPS.get(self.text_group_urn(), "unknown")
 
     def work_label(self):
         parts = self.cts_urn.split(":")
