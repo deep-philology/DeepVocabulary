@@ -76,7 +76,7 @@ def word_list_by_work(request, cts_urn):
                 "lemma_text": lemma_text[lemma_id],
                 "shortdef": definitions[lemma_id],
                 "count": passage_lemmas[lemma_id],
-                "frequency": round(100000 * passage_lemmas[lemma_id] / total, 1),
+                "frequency": round(10000 * passage_lemmas[lemma_id] / total, 1),
             }
             for lemma_id in passage_lemmas.keys()
         ], key=itemgetter("count"), reverse=True
@@ -118,7 +118,7 @@ def word_list_by_ref(request, cts_urn, ref_prefix):
                 "lemma_text": lemma_text[lemma_id],
                 "shortdef": definitions[lemma_id],
                 "count": passage_lemmas[lemma_id],
-                "frequency": int(1000000 * passage_lemmas[lemma_id] / total) / 10,
+                "frequency": int(100000 * passage_lemmas[lemma_id] / total) / 10,
             }
         for lemma_id in passage_lemmas.keys()
         ], key=itemgetter("count"), reverse=True

@@ -10,9 +10,9 @@ class Lemma(models.Model):
     def frequencies(self):
         corpus_total, core_total = calc_overall_counts()
 
-        # per 100k
-        corpus_freq = round(100000 * self.corpus_count / corpus_total, 1)
-        core_freq = round(100000 * self.core_count / core_total, 1)
+        # per 10k
+        corpus_freq = round(10000 * self.corpus_count / corpus_total, 1)
+        core_freq = round(10000 * self.core_count / core_total, 1)
 
         return corpus_freq, core_freq
 
