@@ -4,6 +4,22 @@ from .greeklit import TEXT_GROUPS, WORKS
 class Lemma(models.Model):
 
     text = models.CharField(max_length=100, unique=True)
+    corpus_count = models.IntegerField(null=True)
+    core_count = models.IntegerField(null=True)
+
+    def calc_counts(self):
+        self.corpus_count = self.passages.all(
+        ).aggregate(
+            models.Sum("count")
+        )["count__sum"]
+
+        self.core_count = self.passages.filter(
+            text_edition__is_core=True
+        ).aggregate(
+            models.Sum("count")
+        )["count__sum"]
+
+        self.save()
 
 
 class Definition(models.Model):
@@ -97,3 +113,29 @@ def mark_core(filename):
                 text_edition = text_editions[0]
                 text_edition.is_core = True
                 text_edition.save()
+
+
+def update_lemma_counts():
+    for lemma in Lemma.objects.all():
+        lemma.calc_counts()
+
+
+CORPUS_COUNT = None
+CORE_COUNT = None
+
+def calc_overall_counts():
+    global CORPUS_COUNT, CORE_COUNT
+
+    if not CORPUS_COUNT:
+        CORPUS_COUNT = PassageLemma.objects.all().aggregate(
+            models.Sum("count")
+        )["count__sum"]
+
+    if not CORE_COUNT:
+        CORE_COUNT = PassageLemma.objects.filter(
+            text_edition__is_core=True
+        ).aggregate(
+            models.Sum("count")
+        )["count__sum"]
+
+    return CORPUS_COUNT, CORE_COUNT
