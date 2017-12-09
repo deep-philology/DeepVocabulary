@@ -1,0 +1,109 @@
+Aeschines:
+  Against Ctesiphon                         -
+Aeschylus:
+  Eumenides                                 urn:cts:greekLit:tlg0085.tlg007
+  Oresteia                                  -
+  Persae                                    urn:cts:greekLit:tlg0085.tlg002
+Antiphon:
+  Tetralogies                               -
+Apollonius:
+  Argonautica                               urn:cts:greekLit:tlg0001.tlg001
+Aristophanes:
+  Birds                                     urn:cts:greekLit:tlg0019.tlg006
+  Clouds                                    urn:cts:greekLit:tlg0019.tlg003
+  Frogs                                     urn:cts:greekLit:tlg0019.tlg009
+Aristotle:
+  Metaphysics                               -
+  Nicomachean Ethics                        -
+  Poetics                                   urn:cts:greekLit:tlg0086.tlg034
+  Politics                                  -
+Bacchylides                                 -
+Callimachus:
+  Acontius and Cydippe                      -
+  Aitia                                     -
+  The Bath of Pallas                        -
+  Hymn to Zeus                              -
+  Reply to the Telchines                    -
+Demosthenes:
+  Olynthiacs                                -
+  On the Crown                              -
+  First Philippic                           -
+Dio Chrysostom:
+  Euboicus                                  -
+Diogenes Laertius:
+  Life of Socrates                          -
+Euripides:
+  Bacchae                                   urn:cts:greekLit:tlg0006.tlg017
+  Heracles                                  urn:cts:greekLit:tlg0006.tlg009
+  Hippolytus                                -
+  Medea                                     -
+Gorgias:
+  Helen                                     urn:cts:greekLit:tlg0593.1st1K001
+Herodotus:
+  Histories                                 urn:cts:greekLit:tlg0016.tlg001
+Hesiod:
+  Theogony                                  urn:cts:greekLit:tlg0020.tlg001
+  Works and Days                            urn:cts:greekLit:tlg0020.tlg002
+Homer:
+  Iliad                                     urn:cts:greekLit:tlg0012.tlg001
+  Odyssey                                   urn:cts:greekLit:tlg0012.tlg002
+Homeric Hymns:
+  Aphrodite                                 urn:cts:greekLit:tlg0013.tlg005
+  Apollo                                    urn:cts:greekLit:tlg0013.tlg021
+  Demeter                                   urn:cts:greekLit:tlg0013.tlg002
+  Hermes                                    urn:cts:greekLit:tlg0013.tlg018
+Isocrates:
+  Helen                                     urn:cts:greekLit:tlg0010.tlg009
+  Panegyricus                               urn:cts:greekLit:tlg0010.tlg011
+Longus:
+  Daphnis and Chloe                         urn:cts:greekLit:tlg0561.tlg001
+Lucian:
+  Assembly of the Gods
+  Dialogues of the Gods
+  Dream
+  True History                              urn:cts:greekLit:tlg0062.tlg012
+Lysias:
+  On the Murder of Erastosthenes            urn:cts:greekLit:tlg0540.tlg001
+Menander:
+  Dyscolus                                  -
+  Samia                                     -
+New Testament:
+  John                                      urn:cts:greekLit:tlg0031.tlg004
+Pindar:
+  Olympian                                  urn:cts:greekLit:tlg0033.tlg001
+  Isthmian                                  urn:cts:greekLit:tlg0033.tlg004
+  Nemean                                    urn:cts:greekLit:tlg0033.tlg003
+  Pythian                                   urn:cts:greekLit:tlg0033.tlg002
+Plato:
+  Apology                                   urn:cts:greekLit:tlg0059.tlg002
+  Crito                                     urn:cts:greekLit:tlg0059.tlg003
+  Euthyphro                                 urn:cts:greekLit:tlg0059.tlg001
+  Gorgias                                   urn:cts:greekLit:tlg0059.tlg023
+  Ion                                       urn:cts:greekLit:tlg0059.tlg027
+  Meno                                      urn:cts:greekLit:tlg0059.tlg024
+  Protagoras                                urn:cts:greekLit:tlg0059.tlg022
+  Republic                                  urn:cts:greekLit:tlg0059.tlg030
+  Symposium                                 urn:cts:greekLit:tlg0059.tlg011
+Plutarch:
+  Alcibiades                                -
+  Alexander                                 -
+  Coriolanus                                -
+  Comparison of Coriolanus and Alcibiades   -
+  Demosthenes-Cicero                        -
+  Pericles                                  urn:cts:greekLit:tlg0007.tlg012
+Polybius
+  Histories                                 urn:cts:greekLit:tlg0543.tlg001
+Sappho*
+Simonides
+Solon
+Sophocles:
+  Ajax                                      urn:cts:greekLit:tlg0011.tlg003
+  Antigone                                  urn:cts:greekLit:tlg0011.tlg002
+  Oedipus at Colonus                        urn:cts:greekLit:tlg0011.tlg007
+  Oedipus Tyrannus                          urn:cts:greekLit:tlg0011.tlg004
+Theocritus
+Thucydides:
+  History of the Peloponnesian War          urn:cts:greekLit:tlg0003.tlg001
+Xenophon:
+  Agesilaos                                 urn:cts:greekLit:tlg0032.tlg009
+  Anabasis                                  urn:cts:greekLit:tlg0032.tlg006
