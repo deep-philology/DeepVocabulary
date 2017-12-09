@@ -5,6 +5,7 @@ from django.views.generic import DetailView
 from django.db.models import Q, Sum
 
 from .models import Lemma, TextEdition, PassageLemma, Definition
+from .models import calc_overall_counts
 
 
 def lemma_detail(request, pk):
@@ -35,12 +36,16 @@ def lemma_detail(request, pk):
             edition["text_edition"].text_group_label()),
             []).append(edition)
 
+    corpus_freq, core_freq = lemma.frequencies()
+
     return render(request, "deep_vocabulary/lemma_detail.html", {
         "object": lemma,
         "filter": filt,
         "editions_count": len(editions),
         "text_groups": text_groups,
         "passages": passages,
+        "corpus_freq": corpus_freq,
+        "core_freq": core_freq,
     })
 
 
@@ -71,7 +76,7 @@ def word_list_by_work(request, cts_urn):
                 "lemma_text": lemma_text[lemma_id],
                 "shortdef": definitions[lemma_id],
                 "count": passage_lemmas[lemma_id],
-                "frequency": int(1000000 * passage_lemmas[lemma_id] / total) / 10,
+                "frequency": round(100000 * passage_lemmas[lemma_id] / total, 1),
             }
             for lemma_id in passage_lemmas.keys()
         ], key=itemgetter("count"), reverse=True

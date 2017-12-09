@@ -1,16 +1,33 @@
 {% extends "site_base.html" %}
 
+{% load humanize %}
+
 {% block body_base %}
   <section class="lemma-entry">
     <div class="container">
       <h1><span class="pk">{{ object.pk }}.</span> <span class="text">{{ object.text }}</span></h1>
-      <div class="definition-list">
-        {% for definition in object.definitions.all %}
-          <div class="definition">
-            <div class="shortdef">{{ definition.shortdef }}</div>
-            <div class="source">{{ definition.source }}</div>
+      <div class="row">
+        <div class="col">
+          <div class="definition-list">
+            {% for definition in object.definitions.all %}
+              <div class="definition">
+                <div class="shortdef">{{ definition.shortdef }}</div>
+                <div class="source">{{ definition.source }}</div>
+              </div>
+            {% endfor %}
           </div>
-        {% endfor %}
+        </div>
+        <div class="col">
+          <table class="table table-sm">
+            <thead>
+              <tr><th>&nbsp;<th class="text-right">count<th class="text-right">freq. per 100K</tr>
+            </thead>
+            <tbody>
+              <tr><th>core<td class="text-right">{{ object.core_count|intcomma }}<td class="text-right">{{ core_freq }}</tr>
+              <tr><th>corpus<td class="text-right">{{ object.corpus_count|intcomma }}<td class="text-right">{{ corpus_freq }}</tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </section>
@@ -26,7 +43,7 @@
               <h5>{{ text_group.1 }}</h5>
               {% for edition in editions %}
                 <div{% if filter == edition.text_edition.cts_urn %} class="selected"{% endif %}>
-                  <span class="badge badge-primary pull-right">{{ edition.count }}</span>
+                  <span class="badge badge-primary pull-right">{{ edition.count|intcomma }}</span>
                   <a href="{% url 'lemma_detail' object.pk %}?filter={{ edition.text_edition.cts_urn }}">{{ edition.text_edition.work_label }}</a>{% if edition.text_edition.is_core %}*{% endif %}
                 </div>
               {% endfor %}
@@ -53,7 +70,7 @@
               <p>Too many to show.</p>
             {% endif %}
           {% else %}
-            <h3>Passages ({{ object.passages.count }})</h3>
+            <h3>Passages ({{ object.passages.count|intcomma }})</h3>
             <p>Select a work on the left to show passages in that work containing
               <b>{{ object.text }}</b>.
           {% endif %}

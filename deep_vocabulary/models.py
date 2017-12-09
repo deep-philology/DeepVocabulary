@@ -7,6 +7,15 @@ class Lemma(models.Model):
     corpus_count = models.IntegerField(null=True)
     core_count = models.IntegerField(null=True)
 
+    def frequencies(self):
+        corpus_total, core_total = calc_overall_counts()
+
+        # per 100k
+        corpus_freq = round(100000 * self.corpus_count / corpus_total, 1)
+        core_freq = round(100000 * self.core_count / core_total, 1)
+
+        return corpus_freq, core_freq
+
     def calc_counts(self):
         self.corpus_count = self.passages.all(
         ).aggregate(
