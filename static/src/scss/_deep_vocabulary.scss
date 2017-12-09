@@ -3,10 +3,14 @@ body {
 }
 
 .lemma-entry {
+  background: $gray-200;
+  padding: 20px 0;
+  margin-bottom: 20px;
+
   h1 {
     display: block;
     .pk {
-      color: $gray-500;
+      color: $gray-600;
       font-family: 'Noto Sans';
     }
     .text {
@@ -24,7 +28,7 @@ body {
     }
     .source {
       font-family: 'Noto Sans';
-      color: $gray-500;
+      color: $gray-600;
       font-size: 10pt;
       line-height: 6pt;
     }
@@ -89,6 +93,13 @@ div.text-group {
   margin-top: 1.5em;
   > div {
     margin-left: 2em;
+    padding: 2px 5px;
+    &.selected {
+      background: $gray-200;
+    }
+    > .badge {
+      margin-top: 3px;
+    }
     a {
       color: $black;
       &:hover {

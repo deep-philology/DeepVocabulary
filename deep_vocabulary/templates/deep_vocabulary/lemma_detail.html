@@ -1,57 +1,63 @@
 {% extends "site_base.html" %}
 
-{% block body %}
-  <div class="lemma-entry">
-    <h1><span class="pk">{{ object.pk }}.</span> <span class="text">{{ object.text }}</span></h1>
-    <div class="definition-list">
-      {% for definition in object.definitions.all %}
-        <div class="definition">
-          <div class="shortdef">{{ definition.shortdef }}</div>
-          <div class="source">{{ definition.source }}</div>
-        </div>
-      {% endfor %}
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <h3>Editions by Text Group ({{ editions_count }})</h3>
-        {% for text_group,editions in text_groups.items %}
-          <div class="text-group">
-            <h5>{{ text_group.1 }}</h5>
-            {% for edition in editions %}
-              <div>
-                <span class="badge badge-primary pull-right">{{ edition.count }}</span>
-                <a href="{% url 'lemma_detail' object.pk %}?filter={{ edition.text_edition.cts_urn }}">{{ edition.text_edition.work_label }}</a>
-              </div>
-            {% endfor %}
+{% block body_base %}
+  <section class="lemma-entry">
+    <div class="container">
+      <h1><span class="pk">{{ object.pk }}.</span> <span class="text">{{ object.text }}</span></h1>
+      <div class="definition-list">
+        {% for definition in object.definitions.all %}
+          <div class="definition">
+            <div class="shortdef">{{ definition.shortdef }}</div>
+            <div class="source">{{ definition.source }}</div>
           </div>
         {% endfor %}
       </div>
-      <div class="col">
-        {% if filter %}
-          <h3>Passages ({{ passages.count }} of {{ object.passages.count }})</h3>
-          <p>{{ filter }}
-            <a href="{% url 'lemma_detail' object.pk %}">remove</a>
-          </p>
-          {% if passages.count < 1000 %}
-            {% for lemma_passage in passages.all %}
-              <div class="passage">
-                <span class="badge badge-primary pull-right">{{ lemma_passage.count }}</span>
-                <a href="{% url 'word_list_by_ref' lemma_passage.text_edition.cts_urn lemma_passage.reference %}">
-                  {{ lemma_passage.text_edition.work_label }}
-                  <b>{{ lemma_passage.reference }}</b>
-                </a>
-              </div>
-            {% endfor %}
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h3>Editions by Text Group ({{ editions_count }})</h3>
+          {% for text_group,editions in text_groups.items %}
+            <div class="text-group">
+              <h5>{{ text_group.1 }}</h5>
+              {% for edition in editions %}
+                <div{% if filter == edition.text_edition.cts_urn %} class="selected"{% endif %}>
+                  <span class="badge badge-primary pull-right">{{ edition.count }}</span>
+                  <a href="{% url 'lemma_detail' object.pk %}?filter={{ edition.text_edition.cts_urn }}">{{ edition.text_edition.work_label }}</a>
+                </div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+        <div class="col">
+          {% if filter %}
+            <h3>Passages ({{ passages.count }} of {{ object.passages.count }})</h3>
+            <p>{{ filter }}
+              <a href="{% url 'lemma_detail' object.pk %}">remove</a>
+            </p>
+            {% if passages.count < 1000 %}
+              {% for lemma_passage in passages.all %}
+                <div class="passage">
+                  <span class="badge badge-primary pull-right">{{ lemma_passage.count }}</span>
+                  <a href="{% url 'word_list_by_ref' lemma_passage.text_edition.cts_urn lemma_passage.reference %}">
+                    {{ lemma_passage.text_edition.work_label }}
+                    <b>{{ lemma_passage.reference }}</b>
+                  </a>
+                </div>
+              {% endfor %}
+            {% else %}
+              <p>Too many to show.</p>
+            {% endif %}
           {% else %}
-            <p>Too many to show.</p>
+            <h3>Passages ({{ object.passages.count }})</h3>
+            <p>Select a work on the left to show passages in that work containing
+              <b>{{ object.text }}</b>.
           {% endif %}
-        {% else %}
-          <h3>Passages ({{ object.passages.count }})</h3>
-          <p>Select a work on the left to show passages in that work containing
-            <b>{{ object.text }}</b>.
-        {% endif %}
+        </div>
       </div>
     </div>
-  </div>
+  </section>
 {% endblock %}
