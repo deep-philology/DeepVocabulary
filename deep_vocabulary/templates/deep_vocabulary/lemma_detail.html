@@ -21,27 +21,35 @@
             {% for edition in editions %}
               <div>
                 <span class="badge badge-primary pull-right">{{ edition.count }}</span>
-                {{ edition.text_edition.work_label }}
+                <a href="{% url 'lemma_detail' object.pk %}?filter={{ edition.text_edition.cts_urn }}">{{ edition.text_edition.work_label }}</a>
               </div>
             {% endfor %}
           </div>
         {% endfor %}
       </div>
       <div class="col">
-        <h3>Passages ({{ object.passages.count }})</h3>
-        {% if object.passages.count < 1000 %}
-          {% for lemma_passage in object.passages.all %}
-            <div>
-              <span class="badge badge-dark">{{ lemma_passage.count }}</span>
-              {{ lemma_passage.text_edition.text_group_label }},
-              <a href="{% url 'word_list_by_ref' lemma_passage.text_edition.cts_urn lemma_passage.reference %}">
-                <b>{{ lemma_passage.text_edition.work_label }}</b>
-                {{ lemma_passage.reference }}
-              </a>
-            </div>
-          {% endfor %}
+        {% if filter %}
+          <h3>Passages ({{ passages.count }} of {{ object.passages.count }})</h3>
+          <p>{{ filter }}
+            <a href="{% url 'lemma_detail' object.pk %}">remove</a>
+          </p>
+          {% if passages.count < 1000 %}
+            {% for lemma_passage in passages.all %}
+              <div class="passage">
+                <span class="badge badge-primary pull-right">{{ lemma_passage.count }}</span>
+                <a href="{% url 'word_list_by_ref' lemma_passage.text_edition.cts_urn lemma_passage.reference %}">
+                  {{ lemma_passage.text_edition.work_label }}
+                  <b>{{ lemma_passage.reference }}</b>
+                </a>
+              </div>
+            {% endfor %}
+          {% else %}
+            <p>Too many to show.</p>
+          {% endif %}
         {% else %}
-          <p>Too many to show.</p>
+          <h3>Passages ({{ object.passages.count }})</h3>
+          <p>Select a work on the left to show passages in that work containing
+            <b>{{ object.text }}</b>.
         {% endif %}
       </div>
     </div>

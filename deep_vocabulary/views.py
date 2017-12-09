@@ -9,6 +9,12 @@ from .models import Lemma, TextEdition, PassageLemma, Definition
 
 def lemma_detail(request, pk):
     lemma = get_object_or_404(Lemma, pk=pk)
+    filt = request.GET.get("filter")
+
+    if filt:
+        passages = lemma.passages.filter(text_edition__cts_urn=filt)
+    else:
+        passages = lemma.passages
 
     x = dict(
             lemma.passages.values_list(
@@ -31,8 +37,10 @@ def lemma_detail(request, pk):
 
     return render(request, "deep_vocabulary/lemma_detail.html", {
         "object": lemma,
+        "filter": filt,
         "editions_count": len(editions),
         "text_groups": text_groups,
+        "passages": passages,
     })
 
 
