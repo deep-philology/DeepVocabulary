@@ -15,6 +15,7 @@ class Definition(models.Model):
 
 class TextEdition(models.Model):
     cts_urn = models.CharField(max_length=250, unique=True)
+    is_core = models.BooleanField(default=False)
 
     def text_group_urn(self):
         parts = self.cts_urn.split(":")
@@ -83,3 +84,16 @@ def import_data(edition_filename, dictionary_filename, passage_lemmas_filename, 
                 count2 += 1
             count1 += 1
     print(f"{count1} passages; {count2} passage lemmas")
+
+
+def mark_core(filename):
+    with open(filename) as f:
+        for line in f:
+            text_editions = TextEdition.objects.filter(
+                cts_urn__startswith=line.strip())
+            if len(text_editions) == 0:
+                print("couldn't find:", line.strip())
+            else:
+                text_edition = text_editions[0]
+                text_edition.is_core = True
+                text_edition.save()
