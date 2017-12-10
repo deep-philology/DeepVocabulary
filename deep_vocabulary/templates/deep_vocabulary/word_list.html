@@ -1,5 +1,7 @@
 {% extends "site_base.html" %}
 
+{% load humanize %}
+
 {% block body_base %}
   <section class="hero">
     <div class="container">
@@ -12,22 +14,46 @@
     <div class="container">
 
       <p class="lead text-right">
-        {{ vocabulary|length }} lemma{{ vocabulary|length|pluralize }};
-        {{ token_total }} token{{ token_total|pluralize }}
+        {{ vocabulary|length|intcomma }} lemma{{ vocabulary|length|pluralize }};
+        {{ token_total|intcomma }} token{{ token_total|pluralize }}
       </p>
 
-      <table class="word-list table table-sm table-striped">
+      <table class="word-list table table-sm table-hover">
         <thead>
           <tr>
-            <th>word<th>shortdef<th class="text-right">count<th class="text-right">frequency
+            <th>word
+            <th>shortdef
+            <th class="text-right">count
+            <th class="text-right">frequency
+            <th class="text-right">corpus&nbsp;freq.
+            <th class="text-right">core&nbsp;freq.
+            <th class="text-right">log&nbsp;ratio
           </tr>
         </thead>
         {% for item in vocabulary %}
-          <tr>
+          <tr{% if item.boosted %} class="table-info"{% endif %}>
             <th class="lemma_text"><a href="{% url 'lemma_detail' item.lemma_id %}?filter={{ text_edition.cts_urn }}">{{ item.lemma_text }}</a>
             <td class="shortdef">{{ item.shortdef }}
-            <td class="count">{{ item.count }}
+            <td class="count">{{ item.count|intcomma }}
             <td class="frequency">{{ item.frequency }}
+            <td class="frequency">{{ item.corpus_frequency }}
+            <td class="frequency">{{ item.core_frequency }}
+            <td class="frequency text-center">{% spaceless %}
+              <span style="color: {% if item.log_ratio <= -6 %}#A00{% else %}transparent{% endif %};">█</span>
+              <span style="color: {% if item.log_ratio <= -5 %}#B22{% else %}transparent{% endif %};">█</span>
+              <span style="color: {% if item.log_ratio <= -4 %}#C44{% else %}transparent{% endif %};">█</span>
+              <span style="color: {% if item.log_ratio <= -3 %}#D66{% else %}transparent{% endif %};">█</span>
+              <span style="color: {% if item.log_ratio <= -2 %}#D88{% else %}transparent{% endif %};">█</span>
+              <span style="color: {% if item.log_ratio <= -1 %}#EAA{% else %}transparent{% endif %};">█</span>
+              <span style="color: #EEE;">█</span>
+              <span style="color: {% if item.log_ratio >= 1 %}#AEA{% else %}transparent{% endif %};">█</span>
+              <span style="color: {% if item.log_ratio >= 2 %}#8D8{% else %}transparent{% endif %};">█</span>
+              <span style="color: {% if item.log_ratio >= 3 %}#6D6{% else %}transparent{% endif %};">█</span>
+              <span style="color: {% if item.log_ratio >= 4 %}#4C4{% else %}transparent{% endif %};">█</span>
+              <span style="color: {% if item.log_ratio >= 5 %}#2B2{% else %}transparent{% endif %};">█</span>
+              <span style="color: {% if item.log_ratio >= 6 %}#0A0{% else %}transparent{% endif %};">█</span>
+              {% endspaceless %}
+            </td>
           </tr>
         {% endfor %}
       </table>

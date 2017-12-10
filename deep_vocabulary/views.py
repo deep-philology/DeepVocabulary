@@ -1,3 +1,4 @@
+from math import log
 from operator import itemgetter
 
 from django.shortcuts import get_object_or_404, redirect, render
@@ -64,19 +65,26 @@ def word_list_by_work(request, cts_urn):
         Definition.objects.filter(
             source="logeion_002", lemma__in=passage_lemmas.keys()).values_list(
                 "lemma_id", "shortdef"))
-    lemma_text = dict(
-        Lemma.objects.filter(
-            pk__in=passage_lemmas.keys()).values_list(
-                "pk", "text"))
+    lemma_values_list = Lemma.objects.filter(
+            pk__in=passage_lemmas.keys()
+        ).values_list(
+            "pk", "text", "corpus_count", "core_count"
+        )
+    lemma_data = {item[0]: item[1:4] for item in lemma_values_list}
     total = sum(passage_lemmas.values())
+    corpus_total, core_total = calc_overall_counts()
     vocabulary = sorted(
         [
             {
                 "lemma_id": lemma_id,
-                "lemma_text": lemma_text[lemma_id],
+                "lemma_text": lemma_data[lemma_id][0],
                 "shortdef": definitions[lemma_id],
                 "count": passage_lemmas[lemma_id],
                 "frequency": round(10000 * passage_lemmas[lemma_id] / total, 1),
+                "corpus_frequency": round(10000 * lemma_data[lemma_id][1] / corpus_total, 1),
+                "core_frequency": round(10000 * lemma_data[lemma_id][2] / core_total, 1),
+                "log_ratio": round(log((passage_lemmas[lemma_id] / total) / (lemma_data[lemma_id][2] / core_total))),
+
             }
             for lemma_id in passage_lemmas.keys()
         ], key=itemgetter("count"), reverse=True
@@ -106,19 +114,25 @@ def word_list_by_ref(request, cts_urn, ref_prefix):
         Definition.objects.filter(
             source="logeion_002", lemma__in=passage_lemmas.keys()).values_list(
                 "lemma_id", "shortdef"))
-    lemma_text = dict(
-        Lemma.objects.filter(
-            pk__in=passage_lemmas.keys()).values_list(
-                "pk", "text"))
+    lemma_values_list = Lemma.objects.filter(
+            pk__in=passage_lemmas.keys()
+        ).values_list(
+            "pk", "text", "corpus_count", "core_count"
+        )
+    lemma_data = {item[0]: item[1:4] for item in lemma_values_list}
     total = sum(passage_lemmas.values())
+    corpus_total, core_total = calc_overall_counts()
     vocabulary = sorted(
         [
             {
                 "lemma_id": lemma_id,
-                "lemma_text": lemma_text[lemma_id],
+                "lemma_text": lemma_data[lemma_id][0],
                 "shortdef": definitions[lemma_id],
                 "count": passage_lemmas[lemma_id],
                 "frequency": int(100000 * passage_lemmas[lemma_id] / total) / 10,
+                "corpus_frequency": round(10000 * lemma_data[lemma_id][1] / corpus_total, 1),
+                "core_frequency": round(10000 * lemma_data[lemma_id][2] / core_total, 1),
+                "log_ratio": round(log((passage_lemmas[lemma_id] / total) / (lemma_data[lemma_id][2] / core_total))),
             }
         for lemma_id in passage_lemmas.keys()
         ], key=itemgetter("count"), reverse=True

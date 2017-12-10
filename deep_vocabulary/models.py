@@ -7,7 +7,7 @@ class Lemma(models.Model):
     corpus_count = models.IntegerField(null=True)
     core_count = models.IntegerField(null=True)
 
-    def frequencies(self):
+    def frequencies(self):  # @@@ might remove this and just do in views
         corpus_total, core_total = calc_overall_counts()
 
         # per 10k
