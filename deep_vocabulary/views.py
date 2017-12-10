@@ -100,7 +100,7 @@ def word_list_by_work(request, cts_urn):
                 "frequency": round(10000 * passage_lemmas[lemma_id] / total, 1),
                 "corpus_frequency": round(10000 * lemma_data[lemma_id][1] / corpus_total, 1),
                 "core_frequency": round(10000 * lemma_data[lemma_id][2] / core_total, 1),
-                "log_ratio": round(log((passage_lemmas[lemma_id] / total) / (lemma_data[lemma_id][2] / core_total))),
+                "log_ratio": round(log((passage_lemmas[lemma_id] / total) / (lemma_data[lemma_id][2] / core_total))) if lemma_data[lemma_id][2] else None,
             }
             for lemma_id in passage_lemmas.keys()
         ], key=itemgetter("count"), reverse=True
