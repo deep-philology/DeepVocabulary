@@ -27,7 +27,9 @@
             <th class="text-right">frequency
             <th class="text-right">corpus&nbsp;freq.
             <th class="text-right">core&nbsp;freq.
-            <th class="text-right">log&nbsp;ratio
+            {% if not ref_prefix %}
+              <th class="text-right">log&nbsp;ratio
+            {% endif %}
           </tr>
         </thead>
         {% for item in vocabulary %}
@@ -38,6 +40,7 @@
             <td class="frequency">{{ item.frequency }}
             <td class="frequency">{{ item.corpus_frequency }}
             <td class="frequency">{{ item.core_frequency }}
+            {% if not ref_prefix %}
             <td class="frequency text-center">{% spaceless %}
               <span style="color: {% if item.log_ratio <= -6 %}#A00{% else %}transparent{% endif %};">█</span>
               <span style="color: {% if item.log_ratio <= -5 %}#B22{% else %}transparent{% endif %};">█</span>
@@ -54,6 +57,7 @@
               <span style="color: {% if item.log_ratio >= 6 %}#0A0{% else %}transparent{% endif %};">█</span>
               {% endspaceless %}
             </td>
+            {% endif %}
           </tr>
         {% endfor %}
       </table>
