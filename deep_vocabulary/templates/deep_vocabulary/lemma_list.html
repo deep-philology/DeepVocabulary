@@ -1,0 +1,43 @@
+{% extends "site_base.html" %}
+
+{% load humanize %}
+
+{% block body_base %}
+  <section class="hero">
+    <div class="container">
+      <h1>Lemma List</h1>
+    </div>
+  </section>
+
+  <section class="main">
+    <div class="container">
+
+      {% include "deep_vocabulary/_pagination.html" %}
+
+      <table class="word-list table table-sm table-hover">
+        <thead>
+          <tr>
+            <th>word
+            <th>shortdef
+            <th class="text-right">corpus count
+            <th class="text-right">core count
+            <th class="text-right">corpus freq.
+            <th class="text-right">core freq.
+          </tr>
+        </thead>
+        {% for lemma in lemmas %}
+          <tr{% if item.boosted %} class="table-info"{% endif %}>
+            <th class="lemma_text"><a href="{% url 'lemma_detail' lemma.pk %}">{{ lemma.text }}</a>
+            <td class="shortdef">{{ lemma.definitions.all.0.shortdef }}
+            <td class="count">{{ lemma.corpus_count|intcomma }}
+            <td class="count">{{ lemma.core_count|intcomma }}
+            <td class="count">{{ lemma.frequencies.0 }}
+            <td class="count">{{ lemma.frequencies.1 }}
+          </tr>
+        {% endfor %}
+      </table>
+
+      {% include "deep_vocabulary/_pagination.html" %}
+    </div>
+  </section>
+{% endblock %}

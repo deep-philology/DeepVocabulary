@@ -29,10 +29,9 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 {% block nav %}
                     <ul class="navbar-nav mr-auto">
-                        {% block nav_items %}{% comment %}
-                        <li class="nav-item"><a class="nav-link" href="#tab_one">One</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#tab_two">Two</a></li>
-                        {% endcomment %}{% endblock %}
+                        {% block nav_items %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'lemma_list' %}">Lemma List</a></li>
+                        {% endblock %}
                     </ul>
                 {% endblock %}
                 {% block account_bar %}{% include "_account_bar.html" %}{% endblock %}

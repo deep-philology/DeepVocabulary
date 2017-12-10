@@ -1,13 +1,30 @@
 from math import log
 from operator import itemgetter
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView
-from django.db.models import Q, Sum
 
 from .models import Lemma, TextEdition, PassageLemma, Definition
 from .models import calc_overall_counts
 
+
+def lemma_list(request):
+    lemma_list = Lemma.objects.order_by("-core_count")
+    paginator = Paginator(lemma_list, 100)
+
+    page = request.GET.get("page")
+    try:
+        lemmas = paginator.page(page)
+    except PageNotAnInteger:
+        lemmas = paginator.page(1)
+    except EmptyPage:
+        lemmas = paginator.page(paginator.num_pages)
+
+    return render(request, "deep_vocabulary/lemma_list.html", {
+        "lemmas": lemmas,
+    })
 
 def lemma_detail(request, pk):
     lemma = get_object_or_404(Lemma, pk=pk)

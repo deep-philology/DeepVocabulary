@@ -4,8 +4,8 @@ from .greeklit import TEXT_GROUPS, WORKS
 class Lemma(models.Model):
 
     text = models.CharField(max_length=100, unique=True)
-    corpus_count = models.IntegerField(null=True)
-    core_count = models.IntegerField(null=True)
+    corpus_count = models.IntegerField(default=0)
+    core_count = models.IntegerField(default=0)
 
     def frequencies(self):  # @@@ might remove this and just do in views
         corpus_total, core_total = calc_overall_counts()

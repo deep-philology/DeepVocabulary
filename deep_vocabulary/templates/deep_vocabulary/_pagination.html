@@ -1,0 +1,21 @@
+<div class="pagination">
+  <span class="step-links">
+    {% if lemmas.number > 1 %}
+      <a href="?page=1">first</a>
+    {% endif %}
+    {% if lemmas.has_previous %}
+      <a href="?page={{ lemmas.previous_page_number }}">previous</a>
+    {% endif %}
+
+    <span class="current">
+      page {{ lemmas.number }} of {{ lemmas.paginator.num_pages }}
+    </span>
+
+    {% if lemmas.has_next %}
+      <a href="?page={{ lemmas.next_page_number }}">next</a>
+    {% endif %}
+    {% if lemmas.number < lemmas.paginator.num_pages %}
+      <a href="?page={{ lemmas.paginator.num_pages }}">last</a>
+    {% endif %}
+  </span>
+</div>
