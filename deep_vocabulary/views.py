@@ -32,8 +32,10 @@ def lemma_detail(request, pk):
 
     if filt:
         passages = lemma.passages.filter(text_edition__cts_urn=filt)
+        filtered_edition = TextEdition.objects.filter(cts_urn=filt).first()
     else:
         passages = lemma.passages
+        filtered_edition = None
 
     x = dict(
             lemma.passages.values_list(
@@ -59,6 +61,7 @@ def lemma_detail(request, pk):
     return render(request, "deep_vocabulary/lemma_detail.html", {
         "object": lemma,
         "filter": filt,
+        "filtered_edition": filtered_edition,
         "editions_count": len(editions),
         "text_groups": text_groups,
         "passages": passages,

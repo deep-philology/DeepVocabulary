@@ -53,9 +53,13 @@
         <div class="col">
           {% if filter %}
             <h3>Passages ({{ passages.count }} of {{ object.passages.count|intcomma }})</h3>
-            <p>{{ filter }}
-              <a href="{% url 'lemma_detail' object.pk %}">remove</a>
-            </p>
+            <div class="card bg-light edition-card">
+              <div class="card-body">
+                <span class="pull-right"><a href="{% url 'lemma_detail' object.pk %}">remove</a></span>
+                <h4 class="card-title">{{ filtered_edition.text_group_label }}, {{ filtered_edition.work_label }}</h4>
+                <p class="card-text">{{ filter }}</p>
+              </div>
+            </div>
             {% if passages.count < 1000 %}
               {% for lemma_passage in passages.all %}
                 <div class="passage">
