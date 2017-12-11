@@ -75,54 +75,16 @@ def lemma_by_text(request, text):
     return redirect("lemma_detail", pk=lemma.pk)
 
 
-def word_list_by_work(request, cts_urn):
-    text_edition = get_object_or_404(TextEdition, cts_urn=cts_urn)
-    passage_lemmas = dict(
-        PassageLemma.objects.filter(
-            text_edition=text_edition).values_list(
-                "lemma").annotate(total=Sum("count")))
-    definitions = dict(
-        Definition.objects.filter(
-            source="logeion_002", lemma__in=passage_lemmas.keys()).values_list(
-                "lemma_id", "shortdef"))
-    lemma_values_list = Lemma.objects.filter(
-            pk__in=passage_lemmas.keys()
-        ).values_list(
-            "pk", "text", "corpus_count", "core_count"
-        )
-    lemma_data = {item[0]: item[1:4] for item in lemma_values_list}
-    total = sum(passage_lemmas.values())
-    corpus_total, core_total = calc_overall_counts()
-    vocabulary = sorted(
-        [
-            {
-                "lemma_id": lemma_id,
-                "lemma_text": lemma_data[lemma_id][0],
-                "shortdef": definitions[lemma_id],
-                "count": passage_lemmas[lemma_id],
-                "frequency": round(10000 * passage_lemmas[lemma_id] / total, 1),
-                "corpus_frequency": round(10000 * lemma_data[lemma_id][1] / corpus_total, 1),
-                "core_frequency": round(10000 * lemma_data[lemma_id][2] / core_total, 1),
-                "log_ratio": round(log((passage_lemmas[lemma_id] / total) / (lemma_data[lemma_id][2] / core_total))) if lemma_data[lemma_id][2] else None,
-            }
-            for lemma_id in passage_lemmas.keys()
-        ], key=itemgetter("count"), reverse=True
-    )
-
-    return render(request, "deep_vocabulary/word_list.html", {
-        "text_edition": text_edition,
-        "vocabulary": vocabulary,
-        "token_total": total,
-    })
-
-
-def word_list_by_ref(request, cts_urn, ref_prefix):
+def word_list(request, cts_urn, ref_prefix=None):
     text_edition = get_object_or_404(TextEdition, cts_urn=cts_urn)
 
-    if ref_prefix[-1] == "*":
-        ref_filter = Q(reference__startswith=ref_prefix[:-1])
+    if ref_prefix:
+        if ref_prefix[-1] == "*":
+            ref_filter = Q(reference__startswith=ref_prefix[:-1])
+        else:
+            ref_filter = Q(reference=ref_prefix)
     else:
-        ref_filter = Q(reference=ref_prefix)
+        ref_filter = Q()
 
     passage_lemmas = dict(
         PassageLemma.objects.filter(
@@ -151,7 +113,7 @@ def word_list_by_ref(request, cts_urn, ref_prefix):
                 "frequency": int(100000 * passage_lemmas[lemma_id] / total) / 10,
                 "corpus_frequency": round(10000 * lemma_data[lemma_id][1] / corpus_total, 1),
                 "core_frequency": round(10000 * lemma_data[lemma_id][2] / core_total, 1),
-                # "log_ratio": round(log((passage_lemmas[lemma_id] / total) / (lemma_data[lemma_id][2] / core_total))),
+                "log_ratio": round(log((passage_lemmas[lemma_id] / total) / (lemma_data[lemma_id][2] / core_total))) if not ref_prefix and lemma_data[lemma_id][2] != 0 else None,
             }
         for lemma_id in passage_lemmas.keys()
         ], key=itemgetter("count"), reverse=True
