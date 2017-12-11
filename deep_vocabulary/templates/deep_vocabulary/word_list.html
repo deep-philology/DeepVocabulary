@@ -5,7 +5,13 @@
 {% block body_base %}
   <section class="hero">
     <div class="container">
-      <h2>{{ text_edition.text_group_label }}, {{ text_edition.work_label }}{% if text_edition.is_core %}*{% endif %} {% if ref_prefix %}{{ ref_prefix }}{% endif %}</h2>
+      <h2>
+        {% if ref_prefix %}
+          <a href="{% url 'word_list_by_work' text_edition.cts_urn %}">{{ text_edition.text_group_label }}, {{ text_edition.work_label }}{% if text_edition.is_core %}*{% endif %}</a> {{ ref_prefix }}
+        {% else %}
+          {{ text_edition.text_group_label }}, {{ text_edition.work_label }}{% if text_edition.is_core %}*{% endif %}
+        {% endif %}
+      </h2>
       <h1>Word List</h1>
     </div>
   </section>

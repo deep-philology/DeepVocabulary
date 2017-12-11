@@ -56,7 +56,7 @@
             <div class="card bg-light edition-card">
               <div class="card-body">
                 <span class="pull-right"><a href="{% url 'lemma_detail' object.pk %}">remove</a></span>
-                <h4 class="card-title">{{ filtered_edition.text_group_label }}, {{ filtered_edition.work_label }}</h4>
+                <h4 class="card-title"><a href="{% url 'word_list_by_work' filtered_edition.cts_urn %}">{{ filtered_edition.text_group_label }}, {{ filtered_edition.work_label }}</a></h4>
                 <p class="card-text">{{ filter }}</p>
               </div>
             </div>

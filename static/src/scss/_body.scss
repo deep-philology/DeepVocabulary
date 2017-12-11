@@ -24,12 +24,12 @@ footer {
 }
 
 // Right align links inside a header
-h1, h2, h3, h4 {
-  display: flex;
-  justify-content: space-between;
-  a {
-      margin-top: auto;
-      @extend .btn;
-      @extend .btn-sm;
-  }
-}
+// h1, h2, h3, h4 {
+//   display: flex;
+//   justify-content: space-between;
+//   a {
+//       margin-top: auto;
+//       @extend .btn;
+//       @extend .btn-sm;
+//   }
+// }
