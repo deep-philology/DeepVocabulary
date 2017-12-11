@@ -52,7 +52,7 @@
         </div>
         <div class="col">
           {% if filter %}
-            <h3>Passages ({{ passages.count }} of {{ object.passages.count }})</h3>
+            <h3>Passages ({{ passages.count }} of {{ object.passages.count|intcomma }})</h3>
             <p>{{ filter }}
               <a href="{% url 'lemma_detail' object.pk %}">remove</a>
             </p>
