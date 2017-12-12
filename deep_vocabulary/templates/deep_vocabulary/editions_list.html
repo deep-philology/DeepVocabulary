@@ -1,0 +1,29 @@
+{% extends "site_base.html" %}
+
+{% load humanize %}
+
+{% block head_title %}Editions List{% endblock %}
+
+{% block body_base %}
+  <section class="hero">
+    <div class="container">
+      <h1>Editions List</h1>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <p>* indicates part of the core corpus</p>
+      {% for text_group,editions in text_groups.items %}
+        <div class="text-group">
+          <h5>{{ text_group.1 }}</h5>
+          {% for edition in editions %}
+            <div>
+              <a href="{% url 'word_list_by_work' edition.cts_urn %}">{{ edition.work_label }}</a>{% if edition.is_core %}*{% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

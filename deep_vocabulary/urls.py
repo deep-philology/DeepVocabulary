@@ -5,7 +5,7 @@ from django.views.generic import TemplateView
 
 from django.contrib import admin
 
-from .views import lemma_list, lemma_detail, lemma_by_text, word_list
+from .views import lemma_list, lemma_detail, lemma_by_text, word_list, editions_list
 
 
 urlpatterns = [
@@ -13,11 +13,11 @@ urlpatterns = [
     url(r"^admin/", include(admin.site.urls)),
     # url(r"^account/", include("account.urls")),
 
-
     url(r"^lemma/$", lemma_list, name="lemma_list"),
     url(r"^lemma/(?P<pk>\d+)/$", lemma_detail, name="lemma_detail"),
     url(r"^lemma/text/(?P<text>[^/]+)/$", lemma_by_text, name="lemma_by_text"),
 
+    url(r"^editions/$", editions_list, name="editions_list"),
     url(r"^word-list/(?P<cts_urn>[^/]+)/$", word_list, name="word_list_by_work"),
     url(r"^word-list/(?P<cts_urn>[^/]+)/(?P<ref_prefix>[^/]+)/$", word_list, name="word_list_by_ref"),
 ]

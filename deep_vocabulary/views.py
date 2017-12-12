@@ -26,6 +26,21 @@ def lemma_list(request):
         "lemmas": lemmas,
     })
 
+
+def editions_list(request):
+    text_groups = {}
+
+    for edition in TextEdition.objects.all():
+        text_groups.setdefault(
+            (edition.text_group_urn(),
+            edition.text_group_label()),
+            []).append(edition)
+
+    return render(request, "deep_vocabulary/editions_list.html", {
+        "text_groups": text_groups,
+    })
+
+
 def lemma_detail(request, pk):
     lemma = get_object_or_404(Lemma, pk=pk)
     filt = request.GET.get("filter")
