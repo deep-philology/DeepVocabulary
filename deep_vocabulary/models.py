@@ -41,6 +41,7 @@ class Definition(models.Model):
 class TextEdition(models.Model):
     cts_urn = models.CharField(max_length=250, unique=True)
     is_core = models.BooleanField(default=False)
+    token_count = models.IntegerField(default=0)
 
     def text_group_urn(self):
         parts = self.cts_urn.split(":")
@@ -53,6 +54,14 @@ class TextEdition(models.Model):
         parts = self.cts_urn.split(":")
         work_urn = ":".join(parts[0:3]) + ":" + ".".join(parts[3].split(".")[0:2])
         return WORKS.get(work_urn, "unknown")
+
+    def calc_counts(self):
+        self.token_count = self.passage_lemmas.all(
+        ).aggregate(
+            models.Sum("count")
+        )["count__sum"]
+
+        self.save()
 
 
 class PassageLemma(models.Model):
@@ -127,6 +136,11 @@ def mark_core(filename):
 def update_lemma_counts():
     for lemma in Lemma.objects.all():
         lemma.calc_counts()
+
+
+def update_edition_token_counts():
+    for edition in TextEdition.objects.all():
+        edition.calc_counts()
 
 
 CORPUS_COUNT = None
