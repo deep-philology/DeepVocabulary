@@ -102,3 +102,17 @@ div.passage {
 .edition-card {
   margin-bottom: 1em;
 }
+
+div.text-group {
+  margin-top: 1.5em;
+  > div {
+    margin-left: 2em;
+    padding: 2px 5px;
+    a {
+      color: $black;
+      &:hover {
+        color: $perseus-red;
+      }
+    }
+  }
+}
