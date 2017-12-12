@@ -50,20 +50,8 @@
             <td class="frequency">{{ item.core_frequency }}
             {% if not ref_prefix %}
             <td class="frequency text-center">{% spaceless %}
-              {% if item.log_ratio is not None %}
-              <span style="color: {% if item.log_ratio <= -6 %}#A00{% else %}transparent{% endif %};">█</span>
-              <span style="color: {% if item.log_ratio <= -5 %}#B22{% else %}transparent{% endif %};">█</span>
-              <span style="color: {% if item.log_ratio <= -4 %}#C44{% else %}transparent{% endif %};">█</span>
-              <span style="color: {% if item.log_ratio <= -3 %}#D66{% else %}transparent{% endif %};">█</span>
-              <span style="color: {% if item.log_ratio <= -2 %}#D88{% else %}transparent{% endif %};">█</span>
-              <span style="color: {% if item.log_ratio <= -1 %}#EAA{% else %}transparent{% endif %};">█</span>
-              <span style="color: #EEE;">█</span>
-              <span style="color: {% if item.log_ratio >= 1 %}#AEA{% else %}transparent{% endif %};">█</span>
-              <span style="color: {% if item.log_ratio >= 2 %}#8D8{% else %}transparent{% endif %};">█</span>
-              <span style="color: {% if item.log_ratio >= 3 %}#6D6{% else %}transparent{% endif %};">█</span>
-              <span style="color: {% if item.log_ratio >= 4 %}#4C4{% else %}transparent{% endif %};">█</span>
-              <span style="color: {% if item.log_ratio >= 5 %}#2B2{% else %}transparent{% endif %};">█</span>
-              <span style="color: {% if item.log_ratio >= 6 %}#0A0{% else %}transparent{% endif %};">█</span>
+              {% if item.ratio is not None %}
+                {% include "deep_vocabulary/_ratio.html" %}
               {% endif %}
               {% endspaceless %}
             </td>

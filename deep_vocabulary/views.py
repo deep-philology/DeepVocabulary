@@ -1,4 +1,3 @@
-from math import log
 from operator import itemgetter
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -70,8 +69,8 @@ def lemma_detail(request, pk):
             "text_edition": text_edition,
             "lemma_count": lemma_counts_per_edition[text_edition.pk],
             "frequency": round(10000 * lemma_counts_per_edition[text_edition.pk] / text_edition.token_count, 1),
-            "log_ratio": round(
-                log((10000 * lemma_counts_per_edition[text_edition.pk] / text_edition.token_count) / core_freq)
+            "ratio": (
+                (10000 * lemma_counts_per_edition[text_edition.pk] / text_edition.token_count) / core_freq
             ) if core_freq != 0 else None,
         }
         for text_edition in TextEdition.objects.filter(
@@ -140,8 +139,8 @@ def word_list(request, cts_urn, ref_prefix=None):
                 "frequency": round(10000 * passage_lemmas[lemma_id] / total, 1),
                 "corpus_frequency": round(10000 * lemma_data[lemma_id][1] / corpus_total, 1),
                 "core_frequency": round(10000 * lemma_data[lemma_id][2] / core_total, 1),
-                "log_ratio": round(
-                    log((passage_lemmas[lemma_id] / total) / (lemma_data[lemma_id][2] / core_total))
+                "ratio": (
+                    passage_lemmas[lemma_id] / total) / (lemma_data[lemma_id][2] / core_total
                 ) if (not ref_prefix and lemma_data[lemma_id][2] != 0 and passage_lemmas[lemma_id] > 1) else None,
             }
         for lemma_id in passage_lemmas.keys()
