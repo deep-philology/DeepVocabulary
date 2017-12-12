@@ -1,87 +1,75 @@
 {% extends "site_base.html" %}
 
-{% load i18n %}
-
 {% block head_title_base %}Greek Vocabulary Tool{% endblock %}
 
 {% block body_class %}home{% endblock %}
 
 {% block body_base %}
-<main>
+  <main>
     <section class="jumbotron">
-        <div class="container">
-            {% include "_messages.html" %}
-            <h1>{% blocktrans %}Welcome to<br>pinax-project-account{% endblocktrans %}</h1>
-            <p>
-                {% blocktrans %}
-                In addition to what is provided by the "zero" project, this project
-                provides thorough integration with django-user-accounts, adding
-                comprehensive account management functionality. It is a foundation
-                suitable for most sites that have user accounts.
-                {% endblocktrans %}
-            </p>
-            {% comment %}
-            {% if not user.is_authenticated %}
-            {% url "account_login" as login_url %}
-            {% url "account_signup" as signup_url %}
-            <p>{% blocktrans %}You can <a href="{{ login_url }}" class="btn btn-secondary">Log In</a> or <a href="{{ signup_url }}" class="btn btn-primary">Sign Up</a> to try out the site.{% endblocktrans %}</p>
-            {% endif %}
-            {% endcomment %}
-        </div>
+      <div class="container">
+        <h1>Welcome to the<br><b>Greek Vocabulary Tool</b></h1>
+      </div>
     </section>
     <section id="content-section">
-        <div id="content-body">
-            <h2 class="text-center">{% blocktrans %}What is Pinax?{% endblocktrans %}</h2>
-            <p class="lead">
-                {% blocktrans %}
-                <b>Pinax</b> is an open-source platform based on Django and
-                intended to provide a starting point for websites. It takes
-                care of the things that many sites have in common, so you can
-                focus on what makes your site different.
-                {% endblocktrans %}
-            </p>
-            <div class="feature-columns row">
-                <div class="col">
-                    <div class="icon"><i class="fa fa-cubes fa-3x"></i></div>
-                    <div class="desc">
-                        {% blocktrans %}
-                        <b>Starter projects</b> provide project layout,
-                        scaffolding, already integrated components and
-                        ready-to-go code.
-                        {% endblocktrans %}
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="icon"><i class="fa fa-puzzle-piece fa-3x"></i></div>
-                    <div class="desc">
-                        {% blocktrans %}
-                        <b>Reusable apps</b> provide common
-                        infrastructure, back-end functionality,
-                        and user-facing components.
-                        {% endblocktrans %}
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="icon"><i class="fa fa-tint fa-3x"></i></div>
-                    <div class="desc">
-                        {% blocktrans %}
-                        <b>Themes</b> provide default templates and
-                        stylesheets for quick prototyping and easy customization.
-                        {% endblocktrans %}
-                    </div>
-                </div>
+      <div id="content-body">
+        <h2 class="text-center">What can you <span class="text-muted">(and will you be able to)</span> do with this site?</h2>
+        <div class="feature-columns">
+          <div class="row">
+            <div class="col">
+              <div class="icon"><i class="fa fa-list fa-3x"></i></div>
+              <div class="desc">
+                Generate word lists with definitions for entire Greek works or
+                specific passages.
+              </div>
             </div>
+            <div class="col">
+              <div class="icon"><i class="fa fa-bar-chart fa-3x"></i></div>
+              <div class="desc">
+                View statistics on each word across the entire corpus
+                <span class="text-muted">or user-defined subsets of text</span>.
+              </div>
+            </div>
+            <div class="col text-muted">
+              <div class="icon"><i class="fa fa-comments-o fa-3x"></i></div>
+              <div class="desc">
+                Provide improvements to
+                the underlying data and contribute to open philology.
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 offset-md-2 text-muted">
+              <div class="icon"><i class="fa fa-list-alt fa-3x"></i></div>
+              <div class="desc">
+                Track what you've read and scaffold
+                new texts with just the vocabulary you need.
+              </div>
+            </div>
+            <div class="col-md-4 text-muted">
+              <div class="icon"><i class="fa fa-graduation-cap fa-3x"></i></div>
+              <div class="desc">
+                Study vocabulary with adaptive,
+                spaced flashcards customized to your reading.
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </section>
     <section>
-        <div class="container">
-            <p class="see-more lead text-center">
-                {% blocktrans %}
-                See <a href="http://pinaxproject.com/">pinaxproject.com</a>
-                for more information.
-                {% endblocktrans %}
-            </p>
-        </div>
+      <div class="container">
+        <h2>Acknowledgements</h2>
+        <p>
+          The texts covered here are all from the <a href="http://www.perseus.tufts.edu/hopper/">Perseus Digital Library</a>,
+          They were <a href="https://github.com/gcelano/LemmatizedAncientGreekXML">lemmatized</a> by Giuseppe Celano and
+          combined with short definitions from <a href="http://logeion.uchicago.edu">Logeion</a>, used with the generous permission of Helma Dik.
+        </p>
+        <p>
+          This site is being developed by <a href="http://eldarion.com">Eldarion</a>, supported in part by the
+            <a href="http://www.dh.uni-leipzig.de/">Humboldt Chair of Digital Humanities at the University of Leipzig</a>.
+          </thead>
+      </div>
     </section>
-</main>
+ </main>
 {% endblock %}
