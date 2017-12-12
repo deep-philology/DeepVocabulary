@@ -2,6 +2,8 @@
 
 {% load humanize %}
 
+{% block head_title %}Lemma List{% if lemmas.number > 1 %} page {{ lemmas.number}}{% endif %}{% endblock %}
+
 {% block body_base %}
   <section class="hero">
     <div class="container">

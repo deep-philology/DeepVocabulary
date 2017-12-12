@@ -2,6 +2,8 @@
 
 {% load humanize %}
 
+{% block head_title %}{{ text_edition.text_group_label }}, {{ text_edition.work_label }}{% if ref_prefix %} {{ ref_prefix }}{% endif %}{% endblock %}
+
 {% block body_base %}
   <section class="hero">
     <div class="container">
