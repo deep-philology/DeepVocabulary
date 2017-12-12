@@ -59,17 +59,18 @@ def lemma_detail(request, pk):
         passages = lemma.passages
         filtered_edition = None
 
-    x = dict(
+    lemma_counts_per_edition = dict(
             lemma.passages.values_list(
                 "text_edition").annotate(total=Sum("count")))
 
-    y = TextEdition.objects.filter(pk__in=x.keys())
     editions = [
         {
             "text_edition": text_edition,
-            "count": x[text_edition.pk],
+            "lemma_count": lemma_counts_per_edition[text_edition.pk],
         }
-        for text_edition in y
+        for text_edition in TextEdition.objects.filter(
+            pk__in=lemma_counts_per_edition.keys()
+        )
     ]
     text_groups = {}
     for edition in editions:

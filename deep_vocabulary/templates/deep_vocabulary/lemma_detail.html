@@ -45,7 +45,7 @@
               <h5>{{ text_group.1 }}</h5>
               {% for edition in editions %}
                 <div{% if filter == edition.text_edition.cts_urn %} class="selected"{% endif %}>
-                  <span class="badge badge-primary pull-right">{{ edition.count|intcomma }}</span>
+                  <span class="badge badge-primary pull-right">{{ edition.lemma_count|intcomma }}</span>
                   <a href="{% url 'lemma_detail' object.pk %}?filter={{ edition.text_edition.cts_urn }}">{{ edition.text_edition.work_label }}</a>{% if edition.text_edition.is_core %}*{% endif %}
                 </div>
               {% endfor %}
