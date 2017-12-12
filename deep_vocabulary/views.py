@@ -63,10 +63,16 @@ def lemma_detail(request, pk):
             lemma.passages.values_list(
                 "text_edition").annotate(total=Sum("count")))
 
+    corpus_freq, core_freq = lemma.frequencies()
+
     editions = [
         {
             "text_edition": text_edition,
             "lemma_count": lemma_counts_per_edition[text_edition.pk],
+            "frequency": round(10000 * lemma_counts_per_edition[text_edition.pk] / text_edition.token_count, 1),
+            "log_ratio": round(
+                log((10000 * lemma_counts_per_edition[text_edition.pk] / text_edition.token_count) / core_freq)
+            ) if core_freq != 0 else None,
         }
         for text_edition in TextEdition.objects.filter(
             pk__in=lemma_counts_per_edition.keys()
@@ -78,8 +84,6 @@ def lemma_detail(request, pk):
             (edition["text_edition"].text_group_urn(),
             edition["text_edition"].text_group_label()),
             []).append(edition)
-
-    corpus_freq, core_freq = lemma.frequencies()
 
     return render(request, "deep_vocabulary/lemma_detail.html", {
         "object": lemma,
@@ -133,7 +137,7 @@ def word_list(request, cts_urn, ref_prefix=None):
                 "lemma_text": lemma_data[lemma_id][0],
                 "shortdef": definitions[lemma_id],
                 "count": passage_lemmas[lemma_id],
-                "frequency": int(100000 * passage_lemmas[lemma_id] / total) / 10,
+                "frequency": round(10000 * passage_lemmas[lemma_id] / total, 1),
                 "corpus_frequency": round(10000 * lemma_data[lemma_id][1] / corpus_total, 1),
                 "core_frequency": round(10000 * lemma_data[lemma_id][2] / core_total, 1),
                 "log_ratio": round(

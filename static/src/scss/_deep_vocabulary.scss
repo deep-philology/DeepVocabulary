@@ -90,25 +90,6 @@ section.main {
   padding: 1em 0;
 }
 
-div.text-group {
-  margin-top: 1.5em;
-  > div {
-    margin-left: 2em;
-    padding: 2px 5px;
-    &.selected {
-      background: $gray-200;
-    }
-    > .badge {
-      margin-top: 3px;
-    }
-    a {
-      color: $black;
-      &:hover {
-        color: $perseus-red;
-      }
-    }
-  }
-}
 div.passage {
   a {
     color: $black;
