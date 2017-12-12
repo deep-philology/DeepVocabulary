@@ -11,7 +11,7 @@ from .views import lemma_list, lemma_detail, lemma_by_text, word_list
 urlpatterns = [
     url(r"^$", TemplateView.as_view(template_name="homepage.html"), name="home"),
     url(r"^admin/", include(admin.site.urls)),
-    url(r"^account/", include("account.urls")),
+    # url(r"^account/", include("account.urls")),
 
 
     url(r"^lemma/$", lemma_list, name="lemma_list"),
