@@ -13,13 +13,27 @@
 
   <section>
     <div class="container">
-      <p>* indicates part of the core corpus</p>
+      {% if core %}
+        <p class="lead">
+          Show: <a href="{% url 'editions_list' %}">All</a> | <b>Core</b>
+        </p>
+      {% else %}
+        <p class="lead">
+          Show: <b>All</b> | <a href="{% url 'editions_list' %}?core">Core</a>
+        </p>
+        <p>* indicates part of the core corpus</p>
+      {% endif %}
       {% for text_group,editions in text_groups.items %}
         <div class="text-group">
           <h5>{{ text_group.1 }}</h5>
           {% for edition in editions %}
-            <div>
-              <a href="{% url 'word_list_by_work' edition.cts_urn %}">{{ edition.work_label }}</a>{% if edition.is_core %}*{% endif %}
+            <div class="row">
+              <div class="col">
+                <a href="{% url 'word_list_by_work' edition.cts_urn %}">{{ edition.work_label }}</a>{% if not core and edition.is_core %}*{% endif %}
+              </div>
+              <div class="col">
+                <tt>{{ edition.cts_urn }}</tt>
+              </div>
             </div>
           {% endfor %}
         </div>

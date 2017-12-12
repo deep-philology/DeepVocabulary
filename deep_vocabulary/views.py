@@ -28,16 +28,23 @@ def lemma_list(request):
 
 
 def editions_list(request):
+    core = "core" in request.GET
+
+    if core:
+        editions = TextEdition.objects.filter(is_core=True)
+    else:
+        editions = TextEdition.objects.all()
+
     text_groups = {}
 
-    for edition in TextEdition.objects.all():
+    for edition in editions:
         text_groups.setdefault(
-            (edition.text_group_urn(),
-            edition.text_group_label()),
-            []).append(edition)
+            (edition.text_group_urn(), edition.text_group_label()), []
+        ).append(edition)
 
     return render(request, "deep_vocabulary/editions_list.html", {
         "text_groups": text_groups,
+        "core": core,
     })
 
 
