@@ -39,6 +39,8 @@ class Lemma(models.Model):
 
     def calc_unaccented(self):
         self.unaccented = strip_accents(self.text)
+        if self.unaccented[-1] in "12345":
+            self.unaccented = self.unaccented[:-1]
         self.save()
 
 
