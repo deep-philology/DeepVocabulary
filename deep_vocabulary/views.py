@@ -13,11 +13,12 @@ from .utils import strip_accents
 
 def lemma_list(request):
 
-    query = strip_accents(request.GET.get("q"))
+    query = request.GET.get("q")
     order = "-core_count"
     page = request.GET.get("page")
 
     if query:
+        query = strip_accents(query)
         if query.startswith("*"):
             lemma_list = Lemma.objects.filter(unaccented__endswith=query[1:]).order_by(order)
         elif query.endswith("*"):
