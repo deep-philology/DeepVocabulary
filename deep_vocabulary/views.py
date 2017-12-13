@@ -8,10 +8,12 @@ from django.views.generic import DetailView
 from .models import Lemma, TextEdition, PassageLemma, Definition
 from .models import calc_overall_counts
 
+from .utils import strip_accents
+
 
 def lemma_list(request):
 
-    query = request.GET.get("q")
+    query = strip_accents(request.GET.get("q"))
     order = "-core_count"
     page = request.GET.get("page")
 
