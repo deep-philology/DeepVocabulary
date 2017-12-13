@@ -14,7 +14,16 @@
   <section class="main">
     <div class="container">
 
-      {% include "deep_vocabulary/_pagination.html" %}
+      <form style="margin-bottom: 1em;">
+        <div class="row">
+          <div class="col-4">
+            <input class="form-control form-control-sm" name="q" value="{{ request.GET.q }}" placeholder="search">
+          </div>
+          <div class="col">
+            {% include "deep_vocabulary/_pagination.html" %}
+          </div>
+        </div>
+      </form>
 
       <table class="word-list table table-sm table-hover">
         <thead>

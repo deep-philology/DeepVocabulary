@@ -10,10 +10,23 @@ from .models import calc_overall_counts
 
 
 def lemma_list(request):
-    lemma_list = Lemma.objects.order_by("-core_count")
+
+    query = request.GET.get("q")
+    order = "-core_count"
+    page = request.GET.get("page")
+
+    if query:
+        if query.startswith("*"):
+            lemma_list = Lemma.objects.filter(unaccented__endswith=query[1:]).order_by(order)
+        elif query.endswith("*"):
+            lemma_list = Lemma.objects.filter(unaccented__startswith=query[:-1]).order_by(order)
+        else:
+            lemma_list = Lemma.objects.filter(unaccented=query).order_by(order)
+    else:
+        lemma_list = Lemma.objects.order_by(order)
+
     paginator = Paginator(lemma_list, 100)
 
-    page = request.GET.get("page")
     try:
         lemmas = paginator.page(page)
     except PageNotAnInteger:

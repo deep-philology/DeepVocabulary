@@ -1,11 +1,18 @@
 from django.db import models
 from .greeklit import TEXT_GROUPS, WORKS
+from .utils import strip_accents
 
 class Lemma(models.Model):
 
     text = models.CharField(max_length=100, unique=True)
+    unaccented = models.CharField(max_length=100)
     corpus_count = models.IntegerField(default=0)
     core_count = models.IntegerField(default=0)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["unaccented"])
+        ]
 
     def frequencies(self):  # @@@ might remove this and just do in views
         corpus_total, core_total = calc_overall_counts()
@@ -28,6 +35,10 @@ class Lemma(models.Model):
             models.Sum("count")
         )["count__sum"]
 
+        self.save()
+
+    def calc_unaccented(self):
+        self.unaccented = strip_accents(self.text)
         self.save()
 
 
@@ -141,6 +152,11 @@ def update_lemma_counts():
 def update_edition_token_counts():
     for edition in TextEdition.objects.all():
         edition.calc_counts()
+
+
+def update_lemma_unaccented():
+    for lemma in Lemma.objects.all():
+        lemma.calc_unaccented()
 
 
 CORPUS_COUNT = None
