@@ -43,9 +43,9 @@ def editions_list(request):
     core = "core" in request.GET
 
     if core:
-        editions = TextEdition.objects.filter(is_core=True)
+        editions = TextEdition.objects.filter(is_core=True).order_by("cts_urn")
     else:
-        editions = TextEdition.objects.all()
+        editions = TextEdition.objects.order_by("cts_urn")
 
     text_groups = {}
 
