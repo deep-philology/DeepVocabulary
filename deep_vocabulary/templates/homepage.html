@@ -11,8 +11,8 @@
         <h1>Welcome to the<br><b>Greek Vocabulary Tool</b></h1>
       </div>
     </section>
-    <section id="content-section">
-      <div id="content-body">
+    <section class="more-space">
+      <div class="container">
         <h2 class="text-center">What can you <span class="text-muted">(and will you be able to)</span> do with this site?</h2>
         <div class="feature-columns">
           <div class="row">
@@ -57,7 +57,17 @@
         </div>
       </div>
     </section>
-    <section>
+    <section class="more-space">
+      <div class="container">
+        <p class="lead text-center">
+          To get started, browse the
+          <a href="{% url 'lemma_list' %}">Lemma List</a>
+          or
+          <a href="{% url 'editions_list' %}">Editions List</a>.
+        </p>
+      </div>
+    </section>
+    <section class="more-space">
       <div class="container">
         <h4>Acknowledgements</h4>
         <p>
