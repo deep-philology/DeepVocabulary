@@ -1,6 +1,11 @@
-from django.db import models
+from collections import deque, OrderedDict
+from io import StringIO
+
+from django.db import models, connection
+
 from .greeklit import TEXT_GROUPS, WORKS
-from .utils import strip_accents
+from .utils import strip_accents, chunker
+
 
 class Lemma(models.Model):
 
@@ -94,23 +99,34 @@ def import_data(edition_filename, dictionary_filename, passage_lemmas_filename, 
             editions_by_id[edition_id] = text_edition
             count += 1
     print(f"{count} editions")
+    lemmas_by_text = {}
     lemmas_by_id = {}
     count = 0
     with open(dictionary_filename) as f:
-        for line in f:
-            lemma_id, lemma_text, shortdef = line.strip().split("|")
-            lemma, _ = Lemma.objects.get_or_create(text=lemma_text)
-            Definition.objects.create(
-                lemma = lemma,
-                shortdef = shortdef,
-                source = source,
-            )
-            lemmas_by_id[lemma_id] = lemma
-            count += 1
+        for chunk in chunker(f.readlines(), 200):
+            definitions = deque()
+            for line in chunk:
+                lemma_id, lemma_text, shortdef = line.strip().split("|")
+                if lemma_text not in lemmas_by_text:
+                    lemma = Lemma.objects.create(text=lemma_text)
+                else:
+                    lemma = lemmas_by_text[lemma_text]
+                definitions.append(
+                    Definition(
+                        lemma = lemma,
+                        shortdef = shortdef,
+                        source = source,
+                    )
+                )
+                lemmas_by_id[lemma_id] = lemma
+                count += 1
+            Definition.objects.bulk_create(definitions)
+            definitions.clear()
     print(f"{count} lemmas")
     count1 = 0
     count2 = 0
     with open(passage_lemmas_filename) as f:
+        buf = StringIO()
         for line in f:
             passage, lemma_list = line.strip().split("|")
             edition_id, passage_ref = passage.split(":")
@@ -122,14 +138,17 @@ def import_data(edition_filename, dictionary_filename, passage_lemmas_filename, 
                 else:
                     lemma_id = lemma_count
                     lcount = 1
-                PassageLemma.objects.create(
-                    text_edition = editions_by_id[edition_id],
-                    reference = passage_ref,
-                    lemma = lemmas_by_id[lemma_id],
-                    count = lcount,
-                )
+                row = OrderedDict()
+                row["text_edition_id"] = editions_by_id[edition_id].id
+                row["reference"] = passage_ref
+                row["lemma_id"] = lemmas_by_id[lemma_id].id
+                row["count"] = lcount
+                buf.write("\t".join([str(v) for v in row.values()]) + "\n")
                 count2 += 1
             count1 += 1
+        buf.seek(0)
+        with connection.cursor() as cursor:
+            cursor.copy_from(buf, "deep_vocabulary_passagelemma", columns=row.keys())
     print(f"{count1} passages; {count2} passage lemmas")
 
 
