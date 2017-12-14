@@ -148,6 +148,25 @@ def word_list(request, cts_urn, ref_prefix=None):
     text_edition = get_object_or_404(TextEdition, cts_urn=cts_urn)
 
     order = request.GET.get("o")
+    mincore = request.GET.get("mincore")
+    maxcore = request.GET.get("maxcore")
+
+    corpus_total, core_total = calc_overall_counts()
+
+    min_core_count = 0
+    if mincore:
+        try:
+            mincore = float(mincore)
+            min_core_count = mincore * core_total / 10000
+        except ValueError:
+            mincore = None
+    max_core_count = 10000000
+    if maxcore:
+        try:
+            maxcore = float(maxcore)
+            max_core_count = maxcore * core_total / 10000
+        except ValueError:
+            maxcore = None
 
     if ref_prefix:
         if ref_prefix[-1] == "*":
@@ -201,6 +220,7 @@ def word_list(request, cts_urn, ref_prefix=None):
                 ) if (not ref_prefix and lemma_data[lemma_id][2] != 0 and passage_lemmas[lemma_id] > 1) else None,
             }
         for lemma_id in passage_lemmas.keys()
+        if min_core_count <= lemma_data[lemma_id][2] <= max_core_count
         ], key=sort_key, reverse=sort_reverse
     )
 
