@@ -1,10 +1,15 @@
+import re
 from collections import deque, OrderedDict
 from io import StringIO
+from itertools import zip_longest
 
 from django.db import models, connection
 
+from django.contrib.postgres.fields import ArrayField
+
 from .greeklit import TEXT_GROUPS, WORKS
-from .utils import strip_accents, chunker
+from .querysets import PassageLemmaQuerySet
+from .utils import strip_accents, chunker, natural_sort_key, pg_array_format
 
 
 class Lemma(models.Model):
@@ -29,16 +34,20 @@ class Lemma(models.Model):
         return corpus_freq, core_freq
 
     def calc_counts(self):
-        self.corpus_count = self.passages.all(
+        corpus_count = self.passages.all(
         ).aggregate(
             models.Sum("count")
         )["count__sum"]
+        if corpus_count is not None:
+            self.corpus_count = corpus_count
 
-        self.core_count = self.passages.filter(
+        core_count = self.passages.filter(
             text_edition__is_core=True
         ).aggregate(
             models.Sum("count")
         )["count__sum"]
+        if core_count is not None:
+            self.core_count = core_count
 
         self.save()
 
@@ -83,10 +92,19 @@ class TextEdition(models.Model):
 
 
 class PassageLemma(models.Model):
+
     text_edition = models.ForeignKey(TextEdition, related_name="passage_lemmas")
     reference = models.CharField(max_length=100)
     lemma = models.ForeignKey(Lemma, related_name="passages")
     count = models.IntegerField()
+
+    # reference hierarchy up to four deep
+    ref1 = ArrayField(models.CharField(max_length=60), default=list)
+    ref2 = ArrayField(models.CharField(max_length=60), default=list)
+    ref3 = ArrayField(models.CharField(max_length=60), default=list)
+    ref4 = ArrayField(models.CharField(max_length=60), default=list)
+
+    objects = PassageLemmaQuerySet.as_manager()
 
 
 def import_data(edition_filename, dictionary_filename, passage_lemmas_filename, source):
@@ -127,6 +145,7 @@ def import_data(edition_filename, dictionary_filename, passage_lemmas_filename, 
     count2 = 0
     with open(passage_lemmas_filename) as f:
         buf = StringIO()
+        a = []
         for line in f:
             passage, lemma_list = line.strip().split("|")
             edition_id, passage_ref = passage.split(":")
@@ -143,6 +162,11 @@ def import_data(edition_filename, dictionary_filename, passage_lemmas_filename, 
                 row["reference"] = passage_ref
                 row["lemma_id"] = lemmas_by_id[lemma_id].id
                 row["count"] = lcount
+                ref_sort_key = natural_sort_key(passage_ref, depth=4)
+                row["ref1"] = pg_array_format(ref_sort_key[0])
+                row["ref2"] = pg_array_format(ref_sort_key[1])
+                row["ref3"] = pg_array_format(ref_sort_key[2])
+                row["ref4"] = pg_array_format(ref_sort_key[3])
                 buf.write("\t".join([str(v) for v in row.values()]) + "\n")
                 count2 += 1
             count1 += 1
@@ -166,8 +190,23 @@ def mark_core(filename):
 
 
 def update_lemma_counts():
-    for lemma in Lemma.objects.all():
-        lemma.calc_counts()
+    qs = Lemma.objects.annotate(pc=models.Sum("passages__count"))
+    with connection.cursor() as cursor:
+        sql, params = qs.query.sql_with_params()
+        cursor.execute("""
+            WITH qs AS ({})
+            UPDATE deep_vocabulary_lemma SET corpus_count = COALESCE(qs.pc, 0)
+            FROM qs WHERE qs.id = deep_vocabulary_lemma.id
+        """.format(sql), params)
+
+    qs = Lemma.objects.filter(passages__text_edition__is_core=True).annotate(pc=models.Sum("passages__count"))
+    with connection.cursor() as cursor:
+        sql, params = qs.query.sql_with_params()
+        cursor.execute("""
+            WITH qs AS ({})
+            UPDATE deep_vocabulary_lemma SET core_count = COALESCE(qs.pc, 0)
+            FROM qs WHERE qs.id = deep_vocabulary_lemma.id
+        """.format(sql), params)
 
 
 def update_edition_token_counts():
@@ -176,7 +215,7 @@ def update_edition_token_counts():
 
 
 def update_lemma_unaccented():
-    for lemma in Lemma.objects.all():
+    for lemma in Lemma.objects.iterator():
         lemma.calc_unaccented()
 
 

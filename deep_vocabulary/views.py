@@ -5,6 +5,7 @@ from django.db.models import Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView
 
+from .querysets import Q_by_ref
 from .models import Lemma, TextEdition, PassageLemma, Definition
 from .models import calc_overall_counts
 
@@ -95,10 +96,10 @@ def lemma_detail(request, pk):
     filt = request.GET.get("filter")
 
     if filt:
-        passages = lemma.passages.filter(text_edition__cts_urn=filt)
+        passages = lemma.passages.filter(text_edition__cts_urn=filt).order_by_ref()
         filtered_edition = TextEdition.objects.filter(cts_urn=filt).first()
     else:
-        passages = lemma.passages
+        passages = lemma.passages.all()
         filtered_edition = None
 
     lemma_counts_per_edition = dict(
@@ -164,10 +165,11 @@ def word_list(request, cts_urn, ref_prefix=None):
             maxcore = None
 
     if ref_prefix:
-        if ref_prefix[-1] == "*":
-            ref_filter = Q(reference__startswith=ref_prefix[:-1])
+        if "-" in ref_prefix:
+            start, end = ref_prefix.split("-")
+            ref_filter = Q_by_ref(start, "gte") & Q_by_ref(end, "lte")
         else:
-            ref_filter = Q(reference=ref_prefix)
+            ref_filter = Q_by_ref(ref_prefix)
     else:
         ref_filter = Q()
 
