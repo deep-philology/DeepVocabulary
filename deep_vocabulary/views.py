@@ -147,6 +147,8 @@ def lemma_by_text(request, text):
 def word_list(request, cts_urn, ref_prefix=None):
     text_edition = get_object_or_404(TextEdition, cts_urn=cts_urn)
 
+    order = request.GET.get("o")
+
     if ref_prefix:
         if ref_prefix[-1] == "*":
             ref_filter = Q(reference__startswith=ref_prefix[:-1])
@@ -172,6 +174,18 @@ def word_list(request, cts_urn, ref_prefix=None):
     lemma_data = {item[0]: item[1:4] for item in lemma_values_list}
     total = sum(passage_lemmas.values())
     corpus_total, core_total = calc_overall_counts()
+
+    if order == "2":  # log ratio descending
+        sort_key = lambda x: x["ratio"] if x["ratio"] else 1
+        sort_reverse = True
+    elif order == "3":  # log ratio ascending
+        sort_key = lambda x: x["ratio"] if x["ratio"] else 1
+        sort_reverse = False
+    else:  # usually "1" but also default: count descending
+        sort_key = itemgetter("count")
+        sort_reverse = True
+
+
     vocabulary = sorted(
         [
             {
@@ -180,14 +194,14 @@ def word_list(request, cts_urn, ref_prefix=None):
                 "shortdef": definitions[lemma_id],
                 "count": passage_lemmas[lemma_id],
                 "frequency": round(10000 * passage_lemmas[lemma_id] / total, 1),
-                "corpus_frequency": round(10000 * lemma_data[lemma_id][1] / corpus_total, 1),
-                "core_frequency": round(10000 * lemma_data[lemma_id][2] / core_total, 1),
+                "corpus_frequency": round(10000 * lemma_data[lemma_id][1] / corpus_total, 3),
+                "core_frequency": round(10000 * lemma_data[lemma_id][2] / core_total, 2),
                 "ratio": (
                     passage_lemmas[lemma_id] / total) / (lemma_data[lemma_id][2] / core_total
                 ) if (not ref_prefix and lemma_data[lemma_id][2] != 0 and passage_lemmas[lemma_id] > 1) else None,
             }
         for lemma_id in passage_lemmas.keys()
-        ], key=itemgetter("count"), reverse=True
+        ], key=sort_key, reverse=sort_reverse
     )
 
     return render(request, "deep_vocabulary/word_list.html", {
