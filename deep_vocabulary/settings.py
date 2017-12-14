@@ -142,6 +142,7 @@ INSTALLED_APPS = [
     "account",
     "pinax.eventlog",
     "pinax.webanalytics",
+    "raven.contrib.django.raven_compat",
 
     # project
     "deep_vocabulary",
@@ -199,3 +200,8 @@ AUTHENTICATION_BACKENDS = [
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = bool(int(os.environ.get("SECURE_SSL_REDIRECT", "0")))
+
+if "SENTRY_DSN" in os.environ:
+    RAVEN_CONFIG = {
+        "dsn": os.environ["SENTRY_DSN"],
+    }
