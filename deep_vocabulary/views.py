@@ -141,6 +141,13 @@ def lemma_detail(request, pk):
 
 
 def word_list(request, cts_urn, ref_prefix=None):
+
+    if "reference" in request.GET:
+        if request.GET.get("reference"):
+            return redirect("word_list_by_ref", cts_urn=cts_urn, ref_prefix=request.GET.get("reference"))
+        else:
+            return redirect("word_list_by_work", cts_urn=cts_urn)
+
     text_edition = get_object_or_404(TextEdition, cts_urn=cts_urn)
 
     order = request.GET.get("o")
