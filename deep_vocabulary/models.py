@@ -5,8 +5,7 @@ from itertools import zip_longest
 
 from django.db import models, connection
 
-from django.contrib.postgres.fields import ArrayField
-
+from .db.fields import ArrayField
 from .greeklit import TEXT_GROUPS, WORKS
 from .querysets import PassageLemmaQuerySet
 from .utils import strip_accents, chunker, natural_sort_key, pg_array_format
