@@ -15,7 +15,20 @@ def lemma_list(request):
 
     query = request.GET.get("q")
     order = request.GET.get("o")
+    mincore = request.GET.get("mincore")
+    maxcore = request.GET.get("maxcore")
     page = request.GET.get("page")
+
+    if mincore:
+        try:
+            mincore = float(mincore)
+        except ValueError:
+            mincore = None
+    if maxcore:
+        try:
+            maxcore = float(maxcore)
+        except ValueError:
+            maxcore = None
 
     if query:
         query = strip_accents(query)
@@ -28,12 +41,19 @@ def lemma_list(request):
     else:
         lemma_list = Lemma.objects
 
+    corpus_total, core_total = calc_overall_counts()
+
+    if mincore:
+        lemma_list = lemma_list.filter(core_count__gte=mincore * core_total / 10000)
+    if maxcore:
+        lemma_list = lemma_list.filter(core_count__lte=maxcore * core_total / 10000)
+
+
     lemma_list = lemma_list.order_by({
         "1": "-core_count",
         "2": "-corpus_count",
         "3": "text",
     }.get(order, "-core_count"))
-
 
     paginator = Paginator(lemma_list, 100)
 
