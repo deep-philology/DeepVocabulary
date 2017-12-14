@@ -139,11 +139,6 @@ def lemma_detail(request, pk):
     })
 
 
-def lemma_by_text(request, text):
-    lemma = get_object_or_404(Lemma, text=text)
-    return redirect("lemma_detail", pk=lemma.pk)
-
-
 def word_list(request, cts_urn, ref_prefix=None):
     text_edition = get_object_or_404(TextEdition, cts_urn=cts_urn)
 
