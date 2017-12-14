@@ -153,6 +153,7 @@ def word_list(request, cts_urn, ref_prefix=None):
     order = request.GET.get("o")
     mincore = request.GET.get("mincore")
     maxcore = request.GET.get("maxcore")
+    page = request.GET.get("page")
 
     corpus_total, core_total = calc_overall_counts()
 
@@ -208,7 +209,6 @@ def word_list(request, cts_urn, ref_prefix=None):
         sort_key = itemgetter("count")
         sort_reverse = True
 
-
     vocabulary = sorted(
         [
             {
@@ -228,9 +228,20 @@ def word_list(request, cts_urn, ref_prefix=None):
         ], key=sort_key, reverse=sort_reverse
     )
 
+    lemma_count = len(vocabulary)
+    paginator = Paginator(vocabulary, 100)
+
+    try:
+        lemmas = paginator.page(page)
+    except PageNotAnInteger:
+        lemmas = paginator.page(1)
+    except EmptyPage:
+        lemmas = paginator.page(paginator.num_pages)
+
     return render(request, "deep_vocabulary/word_list.html", {
         "text_edition": text_edition,
         "ref_prefix": ref_prefix,
-        "vocabulary": vocabulary,
+        "lemmas": lemmas,
+        "lemma_count": lemma_count,
         "token_total": total,
     })

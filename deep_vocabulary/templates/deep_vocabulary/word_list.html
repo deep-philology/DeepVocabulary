@@ -25,9 +25,11 @@
         <input type="text" name="reference" {% if ref_prefix %}value="{{ ref_prefix }}"{% endif %}>
       </form>
       <p class="lead text-right">
-        {{ vocabulary|length|intcomma }} lemma{{ vocabulary|length|pluralize }};
+        {{ lemma_count|intcomma }} lemma{{ lemma_count|pluralize }};
         {{ token_total|intcomma }} token{{ token_total|pluralize }}
       </p>
+
+      <p>{% include "deep_vocabulary/_pagination.html" %}</p>
 
       <table class="word-list table table-sm table-hover">
         <thead>
@@ -43,7 +45,7 @@
             {% endif %}
           </tr>
         </thead>
-        {% for item in vocabulary %}
+        {% for item in lemmas %}
           <tr{% if item.boosted %} class="table-info"{% endif %}>
             <th class="lemma_text"><a href="{% url 'lemma_detail' item.lemma_id %}?filter={{ text_edition.cts_urn }}">{{ item.lemma_text }}</a>
             <td class="shortdef">{{ item.shortdef }}
@@ -62,6 +64,9 @@
           </tr>
         {% endfor %}
       </table>
+
+      <p>{% include "deep_vocabulary/_pagination.html" %}</p>
+
     </div>
   </section>
 {% endblock %}
