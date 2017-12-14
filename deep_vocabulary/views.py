@@ -14,19 +14,26 @@ from .utils import strip_accents
 def lemma_list(request):
 
     query = request.GET.get("q")
-    order = "-core_count"
+    order = request.GET.get("o")
     page = request.GET.get("page")
 
     if query:
         query = strip_accents(query)
         if query.startswith("*"):
-            lemma_list = Lemma.objects.filter(unaccented__endswith=query[1:]).order_by(order)
+            lemma_list = Lemma.objects.filter(unaccented__endswith=query[1:])
         elif query.endswith("*"):
-            lemma_list = Lemma.objects.filter(unaccented__startswith=query[:-1]).order_by(order)
+            lemma_list = Lemma.objects.filter(unaccented__startswith=query[:-1])
         else:
-            lemma_list = Lemma.objects.filter(unaccented=query).order_by(order)
+            lemma_list = Lemma.objects.filter(unaccented=query)
     else:
-        lemma_list = Lemma.objects.order_by(order)
+        lemma_list = Lemma.objects
+
+    lemma_list = lemma_list.order_by({
+        "1": "-core_count",
+        "2": "-corpus_count",
+        "3": "text",
+    }.get(order, "-core_count"))
+
 
     paginator = Paginator(lemma_list, 100)
 

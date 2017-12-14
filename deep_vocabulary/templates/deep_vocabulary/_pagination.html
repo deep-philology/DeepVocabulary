@@ -1,12 +1,12 @@
 <div class="pagination">
   <span class="step-links">
     {% if lemmas.number > 1 %}
-      <a href="?{% if request.GET.q %}q={{ request.GET.q }}&amp;{% endif %}page=1"><i class="fa fa-step-backward"></i></a>
+      <a href="?{% if request.GET.q %}q={{ request.GET.q }}&amp;{% endif %}{% if request.GET.o %}o={{ request.GET.o }}&amp;{% endif %}page=1"><i class="fa fa-step-backward"></i></a>
     {% else %}
       <span class="text-muted"><i class="fa fa-step-backward"></i></span>
     {% endif %}
     {% if lemmas.has_previous %}
-      <a href="?{% if request.GET.q %}q={{ request.GET.q }}&amp;{% endif %}page={{ lemmas.previous_page_number }}"><i class="fa fa-backward"></i></a>
+      <a href="?{% if request.GET.q %}q={{ request.GET.q }}&amp;{% endif %}{% if request.GET.o %}o={{ request.GET.o }}&amp;{% endif %}page={{ lemmas.previous_page_number }}"><i class="fa fa-backward"></i></a>
     {% else %}
       <span class="text-muted"><i class="fa fa-backward"></i></span>
     {% endif %}
@@ -16,12 +16,12 @@
     </span>
 
     {% if lemmas.has_next %}
-      <a href="?{% if request.GET.q %}q={{ request.GET.q }}&amp;{% endif %}page={{ lemmas.next_page_number }}"><i class="fa fa-forward"></i></a>
+      <a href="?{% if request.GET.q %}q={{ request.GET.q }}&amp;{% endif %}{% if request.GET.o %}o={{ request.GET.o }}&amp;{% endif %}page={{ lemmas.next_page_number }}"><i class="fa fa-forward"></i></a>
     {% else %}
       <span class="text-muted"><i class="fa fa-forward"></i></span>
     {% endif %}
     {% if lemmas.number < lemmas.paginator.num_pages %}
-      <a href="?{% if request.GET.q %}q={{ request.GET.q }}&amp;{% endif %}page={{ lemmas.paginator.num_pages }}"><i class="fa fa-step-forward"></i></a>
+      <a href="?{% if request.GET.q %}q={{ request.GET.q }}&amp;{% endif %}{% if request.GET.o %}o={{ request.GET.o }}&amp;{% endif %}page={{ lemmas.paginator.num_pages }}"><i class="fa fa-step-forward"></i></a>
     {% else %}
       <span class="text-muted"><i class="fa fa-step-forward"></i></span>
     {% endif %}

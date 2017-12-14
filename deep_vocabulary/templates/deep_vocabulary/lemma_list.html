@@ -17,7 +17,8 @@
       <form style="margin-bottom: 1em;">
         <div class="row">
           <div class="col-4">
-            <input class="form-control form-control-sm" name="q" value="{{ request.GET.q }}" placeholder="search">
+            <input type="text" class="form-control form-control-sm" name="q" value="{{ request.GET.q }}" placeholder="search">
+            <input type="hidden" name="o" value="{{ request.GET.o }}">
           </div>
           <div class="col">
             {% include "deep_vocabulary/_pagination.html" %}
