@@ -11,7 +11,7 @@
         "pk": 2,
         "model": "sites.site",
         "fields": {
-            "domain": "example.com",
+            "domain": "gu658.us1.eldarioncloud.com",
             "name": "Greek Vocabulary Tool"
         }
     }
