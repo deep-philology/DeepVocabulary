@@ -1,7 +1,7 @@
 from operator import itemgetter
 from urllib.parse import urlencode
 
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator, Page
 from django.core.urlresolvers import reverse
 from django.db.models import Q, Sum
 from django.http import JsonResponse
@@ -280,28 +280,29 @@ def word_list(request, cts_urn, response_format="html"):
                 "is_core": text_edition.is_core,
             },
             "ref": ref,
-            "lemmas": list(lemmas.object_list),
+            "lemmas": list(lemmas),
             "lemma_count": lemma_count,
             "token_total": total,
         }
         links = {}
-        self_url = request.build_absolute_uri(reverse(
-            "word_list_json",
-            kwargs=dict(
-                cts_urn=cts_urn,
-                response_format=response_format
-            )
-        ))
-        if lemmas.has_previous():
-            params = urlencode({**request.GET.dict(), "page": lemmas.previous_page_number()})
-            links["prev"] = {
-                "target": f"{self_url}?{params}",
-            }
-        if lemmas.has_next():
-            params = urlencode({**request.GET.dict(), "page": lemmas.next_page_number()})
-            links["next"] = {
-                "target": f"{self_url}?{params}",
-            }
+        if isinstance(lemmas, Page):
+            self_url = request.build_absolute_uri(reverse(
+                "word_list_json",
+                kwargs=dict(
+                    cts_urn=cts_urn,
+                    response_format=response_format
+                )
+            ))
+            if lemmas.has_previous():
+                params = urlencode({**request.GET.dict(), "page": lemmas.previous_page_number()})
+                links["prev"] = {
+                    "target": f"{self_url}?{params}",
+                }
+            if lemmas.has_next():
+                params = urlencode({**request.GET.dict(), "page": lemmas.next_page_number()})
+                links["next"] = {
+                    "target": f"{self_url}?{params}",
+                }
         response = JsonResponse(data)
         if links:
             response["Link"] = encode_link_header(links)
