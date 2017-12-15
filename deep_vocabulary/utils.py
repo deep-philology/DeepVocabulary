@@ -3,6 +3,10 @@ import unicodedata
 
 from itertools import zip_longest
 
+from pyuca.collator import Collator
+
+collator = Collator()
+
 
 def strip_accents(s):
     return "".join(
@@ -34,3 +38,10 @@ def natural_sort_key(ref, depth):
     assert len(tree) <= depth, "too deep for database schema"
     key = natural_sort_key_item
     return tuple(map(key, next(zip_longest(*([iter(tree)] * depth)))))
+
+
+def sort_key(s):
+    return " ".join(
+        str(n).zfill(5)
+        for n in collator.sort_key(unicodedata.normalize("NFD", s))
+    )
