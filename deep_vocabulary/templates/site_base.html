@@ -17,6 +17,21 @@
 
 {% block head_title_base %}{% block head_title %}{% endblock %} — Greek Vocabulary Tool{% endblock %}
 
+{% block extra_head_base %}
+  {% if SITE_DOMAIN == "gu658.us1.eldarioncloud.com" %}
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-107671034-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'UA-107671034-2');
+    </script>
+  {% endif %}
+  {% block extra_head %}{% endblock %}
+{% endblock %}
+
 {% block topbar_base %}
 <header>
     <nav>
