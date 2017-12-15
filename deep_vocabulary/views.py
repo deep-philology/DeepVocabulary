@@ -39,7 +39,7 @@ def lemma_list(request):
         elif query.endswith("*"):
             lemma_list = Lemma.objects.filter(unaccented__startswith=query[:-1])
         else:
-            lemma_list = Lemma.objects.filter(unaccented=query)
+            lemma_list = Lemma.objects.filter(Q(unaccented=query)|(Q(definitions__shortdef__icontains=query)))
     else:
         lemma_list = Lemma.objects
 
