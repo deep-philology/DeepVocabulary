@@ -1,16 +1,13 @@
-import re
-from collections import deque, OrderedDict
+from collections import OrderedDict, deque
 from io import StringIO
-from itertools import zip_longest
 
-from django.db import models, connection
+from django.db import connection, models
 
 from .db.fields import ArrayField
 from .greeklit import TEXT_GROUPS, WORKS
 from .querysets import PassageLemmaQuerySet
-from .utils import (
-    strip_accents, chunker, natural_sort_key, pg_array_format, sort_key
-)
+from .utils import (chunker, natural_sort_key, pg_array_format, sort_key,
+                    strip_accents)
 
 
 class Lemma(models.Model):
@@ -143,9 +140,9 @@ def import_data(edition_filename, dictionary_filename, passage_lemmas_filename, 
                     lemma = lemmas_by_text[lemma_text]
                 definitions.append(
                     Definition(
-                        lemma = lemma,
-                        shortdef = shortdef,
-                        source = source,
+                        lemma=lemma,
+                        shortdef=shortdef,
+                        source=source,
                     )
                 )
                 lemmas_by_id[lemma_id] = lemma
@@ -157,11 +154,9 @@ def import_data(edition_filename, dictionary_filename, passage_lemmas_filename, 
     count2 = 0
     with open(passage_lemmas_filename) as f:
         buf = StringIO()
-        a = []
         for line in f:
             passage, lemma_list = line.strip().split("|")
             edition_id, passage_ref = passage.split(":")
-            lemmas = []
             for lemma_count in lemma_list.split():
                 if "." in lemma_count:
                     lemma_id, lcount = lemma_count.split(".")
@@ -238,6 +233,7 @@ def update_lemma_sort_keys():
 
 CORPUS_COUNT = None
 CORE_COUNT = None
+
 
 def calc_overall_counts():
     global CORPUS_COUNT, CORE_COUNT

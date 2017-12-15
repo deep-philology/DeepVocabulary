@@ -1,14 +1,12 @@
 from operator import itemgetter
 
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.generic import DetailView
 
+from .models import (Definition, Lemma, PassageLemma, TextEdition,
+                     calc_overall_counts)
 from .querysets import Q_by_ref
-from .models import Lemma, TextEdition, PassageLemma, Definition
-from .models import calc_overall_counts
-
 from .utils import strip_accents
 
 
@@ -48,7 +46,6 @@ def lemma_list(request):
         lemma_list = lemma_list.filter(core_count__gte=mincore * core_total / 10000)
     if maxcore:
         lemma_list = lemma_list.filter(core_count__lte=maxcore * core_total / 10000)
-
 
     lemma_list = lemma_list.order_by({
         "1": "-core_count",
@@ -103,8 +100,8 @@ def lemma_detail(request, pk):
         filtered_edition = None
 
     lemma_counts_per_edition = dict(
-            lemma.passages.values_list(
-                "text_edition").annotate(total=Sum("count")))
+        lemma.passages.values_list("text_edition").annotate(total=Sum("count")),
+    )
 
     corpus_freq, core_freq = lemma.frequencies()
 
@@ -123,10 +120,8 @@ def lemma_detail(request, pk):
     ]
     text_groups = {}
     for edition in editions:
-        text_groups.setdefault(
-            (edition["text_edition"].text_group_urn(),
-            edition["text_edition"].text_group_label()),
-            []).append(edition)
+        text_group_key = (edition["text_edition"].text_group_urn(), edition["text_edition"].text_group_label())
+        text_groups.setdefault(text_group_key, []).append(edition)
 
     return render(request, "deep_vocabulary/lemma_detail.html", {
         "object": lemma,
@@ -195,16 +190,22 @@ def word_list(request, cts_urn):
         PassageLemma.objects.filter(
             Q(text_edition=text_edition),
             ref_filter,
-        ).values_list("lemma").annotate(total=Sum("count")))
+        ).values_list("lemma").annotate(total=Sum("count"))
+    )
     definitions = dict(
         Definition.objects.filter(
-            source="logeion_002", lemma__in=passage_lemmas.keys()).values_list(
-                "lemma_id", "shortdef"))
-    lemma_values_list = Lemma.objects.filter(
-            pk__in=passage_lemmas.keys()
+            source="logeion_002",
+            lemma__in=passage_lemmas.keys()
         ).values_list(
-            "pk", "text", "corpus_count", "core_count", "sort_key",
-        )
+            "lemma_id",
+            "shortdef"
+        ),
+    )
+    lemma_values_list = Lemma.objects.filter(
+        pk__in=passage_lemmas.keys()
+    ).values_list(
+        "pk", "text", "corpus_count", "core_count", "sort_key",
+    )
     lemma_data = {item[0]: item[1:] for item in lemma_values_list}
     total = sum(passage_lemmas.values())
     corpus_total, core_total = calc_overall_counts()
@@ -213,10 +214,10 @@ def word_list(request, cts_urn):
         sort_key = itemgetter("sort_key")
         sort_reverse = False
     elif order == "4":  # log ratio descending
-        sort_key = lambda x: x["ratio"] if x["ratio"] else 1
+        sort_key = lambda x: x["ratio"] if x["ratio"] else 1  # noqa: E731
         sort_reverse = True
     elif order == "5":  # log ratio ascending
-        sort_key = lambda x: x["ratio"] if x["ratio"] else 1
+        sort_key = lambda x: x["ratio"] if x["ratio"] else 1  # noqa: E731
         sort_reverse = False
     else:  # usually "1" but also default: count descending
         sort_key = itemgetter("count")
@@ -234,12 +235,14 @@ def word_list(request, cts_urn):
                 "corpus_frequency": round(10000 * lemma_data[lemma_id][1] / corpus_total, 3),
                 "core_frequency": round(10000 * lemma_data[lemma_id][2] / core_total, 2),
                 "ratio": (
-                    passage_lemmas[lemma_id] / total) / (lemma_data[lemma_id][2] / core_total
+                    (passage_lemmas[lemma_id] / total) / (lemma_data[lemma_id][2] / core_total)
                 ) if (not ref and lemma_data[lemma_id][2] != 0 and passage_lemmas[lemma_id] > 1) else None,
             }
-        for lemma_id in passage_lemmas.keys()
-        if min_core_count <= lemma_data[lemma_id][2] <= max_core_count
-        ], key=sort_key, reverse=sort_reverse
+            for lemma_id in passage_lemmas.keys()
+            if min_core_count <= lemma_data[lemma_id][2] <= max_core_count
+        ],
+        key=sort_key,
+        reverse=sort_reverse,
     )
 
     lemma_count = len(vocabulary)
