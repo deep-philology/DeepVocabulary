@@ -110,6 +110,7 @@ TEMPLATES = [
 MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -143,6 +144,7 @@ INSTALLED_APPS = [
     "pinax.eventlog",
     "pinax.webanalytics",
     "raven.contrib.django.raven_compat",
+    "corsheaders",
 
     # project
     "deep_vocabulary",
@@ -205,3 +207,6 @@ if "SENTRY_DSN" in os.environ:
     RAVEN_CONFIG = {
         "dsn": os.environ["SENTRY_DSN"],
     }
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r"^.*/json/$"
