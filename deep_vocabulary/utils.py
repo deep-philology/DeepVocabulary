@@ -47,3 +47,14 @@ def sort_key(s):
         str(n).zfill(5)
         for n in collator.sort_key(unicodedata.normalize("NFD", s))
     )
+
+
+def encode_link_header(lo: dict):
+    links = []
+    for rel, attrs in lo.items():
+        link = []
+        link.append(f"<{attrs.pop('target')}>")
+        for k, v in {"rel": rel, **attrs}.items():
+            link.append(f'{k}="{v}"')
+        links.append("; ".join(link))
+    return ", ".join(links)
