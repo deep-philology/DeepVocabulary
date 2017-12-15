@@ -29,7 +29,14 @@
         {{ token_total|intcomma }} token{{ token_total|pluralize }}
       </p>
 
-      <p>{% include "deep_vocabulary/_pagination.html" %}</p>
+      <p>
+        {% if lemmas.paginator %}
+          {% include "deep_vocabulary/_pagination.html" %}
+          <a style="margin-left: 1em" href="?{% if request.GET.o %}o={{ request.GET.o }}&amp;{% endif %}page=all">SHOW ALL</a>
+        {% else %}
+          <a href="?{% if request.GET.o %}o={{ request.GET.o }}&amp;{% endif %}page=1">PAGINATE</a>
+        {% endif %}
+      </p>
 
       <table class="word-list table table-sm table-hover">
         <thead>
@@ -65,7 +72,14 @@
         {% endfor %}
       </table>
 
-      <p>{% include "deep_vocabulary/_pagination.html" %}</p>
+      <p>
+        {% if lemmas.paginator %}
+          {% include "deep_vocabulary/_pagination.html" %}
+          <a style="margin-left: 1em" href="?{% if request.GET.o %}o={{ request.GET.o }}&amp;{% endif %}page=all">SHOW ALL</a>
+        {% else %}
+          <a href="?{% if request.GET.o %}o={{ request.GET.o }}&amp;{% endif %}page=1">PAGINATE</a>
+        {% endif %}
+      </p>
 
     </div>
   </section>

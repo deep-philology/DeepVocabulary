@@ -56,7 +56,7 @@ def lemma_list(request):
         "3": "text",
     }.get(order, "-core_count"))
 
-    paginator = Paginator(lemma_list, 100)
+    paginator = Paginator(lemma_list, 20)
 
     try:
         lemmas = paginator.page(page)
@@ -239,14 +239,20 @@ def word_list(request, cts_urn):
     )
 
     lemma_count = len(vocabulary)
-    paginator = Paginator(vocabulary, 100)
 
-    try:
-        lemmas = paginator.page(page)
-    except PageNotAnInteger:
-        lemmas = paginator.page(1)
-    except EmptyPage:
-        lemmas = paginator.page(paginator.num_pages)
+    if page == "all":
+        lemmas = vocabulary
+    else:
+        paginator = Paginator(vocabulary, 20)
+
+        try:
+            lemmas = paginator.page(page)
+        except PageNotAnInteger:
+            lemmas = paginator.page(1)
+        except EmptyPage:
+            lemmas = paginator.page(paginator.num_pages)
+
+    # lemmas = vocabulary
 
     return render(request, "deep_vocabulary/word_list.html", {
         "text_edition": text_edition,
