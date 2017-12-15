@@ -32,7 +32,7 @@ def lemma_list(request):
             maxcore = None
 
     if query:
-        query = strip_accents(query)
+        query = strip_accents(query).lower()
         if query.startswith("*"):
             lemma_list = Lemma.objects.filter(unaccented__endswith=query[1:])
         elif query.endswith("*"):
