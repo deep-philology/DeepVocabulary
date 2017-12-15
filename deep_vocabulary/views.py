@@ -140,15 +140,25 @@ def lemma_detail(request, pk):
     })
 
 
-def word_list(request, cts_urn, ref_prefix=None):
+def word_list(request, cts_urn):
+
+    # @@@ could use library for this but this will do for now
+    parts = cts_urn.split(":")
+    if len(parts) == 5:
+        edition_urn = ":".join(parts[:4])
+        ref = parts[4]
+    else:
+        edition_urn = cts_urn
+        ref = None
 
     if "reference" in request.GET:
         if request.GET.get("reference"):
-            return redirect("word_list_by_ref", cts_urn=cts_urn, ref_prefix=request.GET.get("reference"))
+            cts_urn = edition_urn + ":" + request.GET.get("reference")
         else:
-            return redirect("word_list_by_work", cts_urn=cts_urn)
+            cts_urn = edition_urn
+        return redirect("word_list", cts_urn=cts_urn)
 
-    text_edition = get_object_or_404(TextEdition, cts_urn=cts_urn)
+    text_edition = get_object_or_404(TextEdition, cts_urn=edition_urn)
 
     order = request.GET.get("o")
     mincore = request.GET.get("mincore")
@@ -172,12 +182,12 @@ def word_list(request, cts_urn, ref_prefix=None):
         except ValueError:
             maxcore = None
 
-    if ref_prefix:
-        if "-" in ref_prefix:
-            start, end = ref_prefix.split("-")
+    if ref:
+        if "-" in ref:
+            start, end = ref.split("-")
             ref_filter = Q_by_ref(start, "gte") & Q_by_ref(end, "lte")
         else:
-            ref_filter = Q_by_ref(ref_prefix)
+            ref_filter = Q_by_ref(ref)
     else:
         ref_filter = Q()
 
@@ -221,7 +231,7 @@ def word_list(request, cts_urn, ref_prefix=None):
                 "core_frequency": round(10000 * lemma_data[lemma_id][2] / core_total, 2),
                 "ratio": (
                     passage_lemmas[lemma_id] / total) / (lemma_data[lemma_id][2] / core_total
-                ) if (not ref_prefix and lemma_data[lemma_id][2] != 0 and passage_lemmas[lemma_id] > 1) else None,
+                ) if (not ref and lemma_data[lemma_id][2] != 0 and passage_lemmas[lemma_id] > 1) else None,
             }
         for lemma_id in passage_lemmas.keys()
         if min_core_count <= lemma_data[lemma_id][2] <= max_core_count
@@ -240,7 +250,7 @@ def word_list(request, cts_urn, ref_prefix=None):
 
     return render(request, "deep_vocabulary/word_list.html", {
         "text_edition": text_edition,
-        "ref_prefix": ref_prefix,
+        "ref": ref,
         "lemmas": lemmas,
         "lemma_count": lemma_count,
         "token_total": total,

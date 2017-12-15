@@ -17,8 +17,7 @@ urlpatterns = [
     url(r"^lemma/(?P<pk>\d+)/$", lemma_detail, name="lemma_detail"),
 
     url(r"^editions/$", editions_list, name="editions_list"),
-    url(r"^word-list/(?P<cts_urn>[^/]+)/$", word_list, name="word_list_by_work"),
-    url(r"^word-list/(?P<cts_urn>[^/]+)/(?P<ref_prefix>[^/]+)/$", word_list, name="word_list_by_ref"),
+    url(r"^word-list/(?P<cts_urn>[^/]+)/$", word_list, name="word_list"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

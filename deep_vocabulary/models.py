@@ -105,6 +105,9 @@ class PassageLemma(models.Model):
 
     objects = PassageLemmaQuerySet.as_manager()
 
+    def cts_urn(self):
+        return f"{self.text_edition.cts_urn}:{self.reference}"
+
 
 def import_data(edition_filename, dictionary_filename, passage_lemmas_filename, source):
     editions_by_id = {}

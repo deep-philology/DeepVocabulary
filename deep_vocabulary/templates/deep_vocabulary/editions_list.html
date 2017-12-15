@@ -29,7 +29,7 @@
           {% for edition in editions %}
             <div class="row">
               <div class="col">
-                <a href="{% url 'word_list_by_work' edition.cts_urn %}">{{ edition.work_label }}</a>{% if not core and edition.is_core %}*{% endif %}
+                <a href="{% url 'word_list' edition.cts_urn %}">{{ edition.work_label }}</a>{% if not core and edition.is_core %}*{% endif %}
               </div>
               <div class="col">
                 <tt>{{ edition.cts_urn }}</tt>
