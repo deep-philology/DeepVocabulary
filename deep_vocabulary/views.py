@@ -53,7 +53,7 @@ def lemma_list(request):
     lemma_list = lemma_list.order_by({
         "1": "-core_count",
         "2": "-corpus_count",
-        "3": "text",
+        "3": "sort_key",
     }.get(order, "-core_count"))
 
     paginator = Paginator(lemma_list, 100)
@@ -193,16 +193,19 @@ def word_list(request, cts_urn, ref_prefix=None):
     lemma_values_list = Lemma.objects.filter(
             pk__in=passage_lemmas.keys()
         ).values_list(
-            "pk", "text", "corpus_count", "core_count"
+            "pk", "text", "corpus_count", "core_count", "sort_key",
         )
-    lemma_data = {item[0]: item[1:4] for item in lemma_values_list}
+    lemma_data = {item[0]: item[1:] for item in lemma_values_list}
     total = sum(passage_lemmas.values())
     corpus_total, core_total = calc_overall_counts()
 
-    if order == "2":  # log ratio descending
+    if order == "3":  # text (by sort_key)
+        sort_key = itemgetter("sort_key")
+        sort_reverse = False
+    elif order == "4":  # log ratio descending
         sort_key = lambda x: x["ratio"] if x["ratio"] else 1
         sort_reverse = True
-    elif order == "3":  # log ratio ascending
+    elif order == "5":  # log ratio ascending
         sort_key = lambda x: x["ratio"] if x["ratio"] else 1
         sort_reverse = False
     else:  # usually "1" but also default: count descending
@@ -214,6 +217,7 @@ def word_list(request, cts_urn, ref_prefix=None):
             {
                 "lemma_id": lemma_id,
                 "lemma_text": lemma_data[lemma_id][0],
+                "sort_key": lemma_data[lemma_id][3],
                 "shortdef": definitions[lemma_id],
                 "count": passage_lemmas[lemma_id],
                 "frequency": round(10000 * passage_lemmas[lemma_id] / total, 1),

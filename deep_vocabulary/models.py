@@ -8,19 +8,25 @@ from django.db import models, connection
 from .db.fields import ArrayField
 from .greeklit import TEXT_GROUPS, WORKS
 from .querysets import PassageLemmaQuerySet
-from .utils import strip_accents, chunker, natural_sort_key, pg_array_format
+from .utils import (
+    strip_accents, chunker, natural_sort_key, pg_array_format, sort_key
+)
 
 
 class Lemma(models.Model):
 
     text = models.CharField(max_length=100, unique=True)
+
     unaccented = models.CharField(max_length=100)
+    sort_key = models.TextField()
+
     corpus_count = models.IntegerField(default=0)
     core_count = models.IntegerField(default=0)
 
     class Meta:
         indexes = [
-            models.Index(fields=["unaccented"])
+            models.Index(fields=["unaccented"]),
+            models.Index(fields=["sort_key"]),
         ]
 
     def frequencies(self):  # @@@ might remove this and just do in views
@@ -54,6 +60,10 @@ class Lemma(models.Model):
         self.unaccented = strip_accents(self.text).lower()
         if self.unaccented[-1] in "12345":
             self.unaccented = self.unaccented[:-1]
+        self.save()
+
+    def calc_sort_key(self):
+        self.sort_key = sort_key(self.text)
         self.save()
 
 
@@ -216,6 +226,11 @@ def update_edition_token_counts():
 def update_lemma_unaccented():
     for lemma in Lemma.objects.iterator():
         lemma.calc_unaccented()
+
+
+def update_lemma_sort_keys():
+    for lemma in Lemma.objects.iterator():
+        lemma.calc_sort_key()
 
 
 CORPUS_COUNT = None
