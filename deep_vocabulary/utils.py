@@ -5,6 +5,7 @@ from itertools import zip_longest
 
 from pyuca.collator import Collator
 
+
 collator = Collator()
 
 
@@ -32,6 +33,7 @@ def natural_sort_key_item(ref):
         v.zfill(4) if v.isdigit() else v
         for v in filter(bool, re.split(r"(\d+)", ref))
     ]
+
 
 def natural_sort_key(ref, depth):
     tree = ref.split(".")
