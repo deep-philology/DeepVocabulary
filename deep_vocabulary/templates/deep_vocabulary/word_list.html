@@ -2,14 +2,14 @@
 
 {% load humanize %}
 
-{% block head_title %}{{ text_edition.text_group_label }}, {{ text_edition.work_label }}{% if ref_prefix %} {{ ref_prefix }}{% endif %}{% endblock %}
+{% block head_title %}{{ text_edition.text_group_label }}, {{ text_edition.work_label }}{% if ref %} {{ ref }}{% endif %}{% endblock %}
 
 {% block body_base %}
   <section class="hero">
     <div class="container">
       <h2>
-        {% if ref_prefix %}
-          <a href="{% url 'word_list_by_work' text_edition.cts_urn %}">{{ text_edition.text_group_label }}, {{ text_edition.work_label }}{% if text_edition.is_core %}*{% endif %}</a> {{ ref_prefix }}
+        {% if ref %}
+          <a href="{% url 'word_list' text_edition.cts_urn %}">{{ text_edition.text_group_label }}, {{ text_edition.work_label }}{% if text_edition.is_core %}*{% endif %}</a> {{ ref }}
         {% else %}
           {{ text_edition.text_group_label }}, {{ text_edition.work_label }}{% if text_edition.is_core %}*{% endif %}
         {% endif %}
@@ -22,7 +22,7 @@
     <div class="container">
 
       <form>
-        <input type="text" name="reference" {% if ref_prefix %}value="{{ ref_prefix }}"{% endif %}>
+        <input type="text" class="form-control form-control-sm col-2" name="reference" {% if ref %}value="{{ ref }}"{% endif %} placeholder="passage citation">
       </form>
       <p class="lead text-right">
         {{ lemma_count|intcomma }} lemma{{ lemma_count|pluralize }};
@@ -40,7 +40,7 @@
             <th class="text-right">frequency
             <th class="text-right">corpus&nbsp;freq.
             <th class="text-right">core&nbsp;freq.
-            {% if not ref_prefix %}
+            {% if not ref %}
               <th class="text-center">log&nbsp;ratio
             {% endif %}
           </tr>
@@ -53,7 +53,7 @@
             <td class="frequency">{{ item.frequency }}
             <td class="frequency">{{ item.corpus_frequency }}
             <td class="frequency">{{ item.core_frequency }}
-            {% if not ref_prefix %}
+            {% if not ref %}
             <td class="frequency text-center">{% spaceless %}
               {% if item.ratio is not None %}
                 {% include "deep_vocabulary/_ratio.html" %}
