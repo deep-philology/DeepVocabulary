@@ -1,13 +1,16 @@
 from operator import itemgetter
+from urllib.parse import urlencode
 
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.core.urlresolvers import reverse
 from django.db.models import Q, Sum
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .models import (Definition, Lemma, PassageLemma, TextEdition,
                      calc_overall_counts)
 from .querysets import Q_by_ref
-from .utils import strip_accents
+from .utils import encode_link_header, strip_accents
 
 
 def lemma_list(request):
@@ -135,7 +138,7 @@ def lemma_detail(request, pk):
     })
 
 
-def word_list(request, cts_urn):
+def word_list(request, cts_urn, response_format="html"):
 
     # @@@ could use library for this but this will do for now
     parts = cts_urn.split(":")
@@ -261,10 +264,45 @@ def word_list(request, cts_urn):
 
     # lemmas = vocabulary
 
-    return render(request, "deep_vocabulary/word_list.html", {
-        "text_edition": text_edition,
-        "ref": ref,
-        "lemmas": lemmas,
-        "lemma_count": lemma_count,
-        "token_total": total,
-    })
+    if response_format == "html":
+        return render(request, "deep_vocabulary/word_list.html", {
+            "text_edition": text_edition,
+            "ref": ref,
+            "lemmas": lemmas,
+            "lemma_count": lemma_count,
+            "token_total": total,
+        })
+
+    if response_format == "json":
+        data = {
+            "text_edition": {
+                "cts_urn": text_edition.cts_urn,
+                "is_core": text_edition.is_core,
+            },
+            "ref": ref,
+            "lemmas": list(lemmas.object_list),
+            "lemma_count": lemma_count,
+            "token_total": total,
+        }
+        links = {}
+        self_url = request.build_absolute_uri(reverse(
+            "word_list_json",
+            kwargs=dict(
+                cts_urn=cts_urn,
+                response_format=response_format
+            )
+        ))
+        if lemmas.has_previous():
+            params = urlencode({**request.GET.dict(), "page": lemmas.previous_page_number()})
+            links["prev"] = {
+                "target": f"{self_url}?{params}",
+            }
+        if lemmas.has_next():
+            params = urlencode({**request.GET.dict(), "page": lemmas.next_page_number()})
+            links["next"] = {
+                "target": f"{self_url}?{params}",
+            }
+        response = JsonResponse(data)
+        if links:
+            response["Link"] = encode_link_header(links)
+        return response

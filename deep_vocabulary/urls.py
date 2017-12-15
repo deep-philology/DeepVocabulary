@@ -18,6 +18,7 @@ urlpatterns = [
 
     url(r"^editions/$", editions_list, name="editions_list"),
     url(r"^word-list/(?P<cts_urn>[^/]+)/$", word_list, name="word_list"),
+    url(r"^word-list/(?P<cts_urn>[^/]+)/(?P<response_format>json)/$", word_list, name="word_list_json"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
