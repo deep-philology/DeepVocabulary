@@ -96,7 +96,7 @@ def lemma_detail(request, pk):
     filt = request.GET.get("filter")
 
     if filt:
-        passages = lemma.passages.filter(text_edition__cts_urn=filt).order_by_ref()
+        passages = lemma.passages.filter(text_edition__cts_urn=filt).select_related().order_by_ref()
         filtered_edition = TextEdition.objects.filter(cts_urn=filt).first()
     else:
         passages = lemma.passages.all()
