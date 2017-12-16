@@ -9,3 +9,4 @@ raven==6.4.0
 pyuca==1.2
 flake8==3.5.0
 django-cors-headers==2.1.0
+django-querycount==0.7.0
