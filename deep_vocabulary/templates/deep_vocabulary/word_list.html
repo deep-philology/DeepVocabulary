@@ -23,6 +23,9 @@
 
       <form>
         <input type="text" class="form-control form-control-sm col-2" name="reference" {% if ref %}value="{{ ref }}"{% endif %} placeholder="passage citation">
+        {% for k,v in request.GET.items %}
+          {% if k != "page" %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endif %}
+        {% endfor %}
       </form>
       <p class="lead text-right">
         {{ lemma_count|intcomma }} lemma{{ lemma_count|pluralize }};
@@ -32,9 +35,9 @@
       <p>
         {% if lemmas.paginator %}
           {% include "deep_vocabulary/_pagination.html" %}
-          <a style="margin-left: 1em" href="?{% if request.GET.o %}o={{ request.GET.o }}&amp;{% endif %}page=all">SHOW ALL</a>
+          <a style="margin-left: 1em" href="?{% if extra_query_params %}{{ extra_query_params }}&amp;{% endif %}page=all">SHOW ALL</a>
         {% else %}
-          <a href="?{% if request.GET.o %}o={{ request.GET.o }}&amp;{% endif %}page=1">PAGINATE</a>
+          <a href="?{% if extra_query_params %}{{ extra_query_params }}&amp;{% endif %}page=1">PAGINATE</a>
         {% endif %}
       </p>
 

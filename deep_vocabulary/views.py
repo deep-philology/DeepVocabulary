@@ -21,6 +21,11 @@ def lemma_list(request):
     maxcore = request.GET.get("maxcore")
     page = request.GET.get("page")
 
+    params = request.GET.copy()
+    if "page" in params:
+        del params["page"]
+    extra_query_params = urlencode(params)
+
     if mincore:
         try:
             mincore = float(mincore)
@@ -67,6 +72,7 @@ def lemma_list(request):
 
     return render(request, "deep_vocabulary/lemma_list.html", {
         "lemmas": lemmas,
+        "extra_query_params": extra_query_params,
     })
 
 
@@ -149,19 +155,26 @@ def word_list(request, cts_urn, response_format="html"):
         edition_urn = cts_urn
         ref = None
 
+    order = request.GET.get("o")
+    mincore = request.GET.get("mincore")
+    maxcore = request.GET.get("maxcore")
+    page = request.GET.get("page")
+
+    params = request.GET.copy()
+    if "page" in params:
+        del params["page"]
+    if "reference" in params:
+        del params["reference"]
+    extra_query_params = urlencode(params)
+
     if "reference" in request.GET:
         if request.GET.get("reference"):
             cts_urn = edition_urn + ":" + request.GET.get("reference")
         else:
             cts_urn = edition_urn
-        return redirect("word_list", cts_urn=cts_urn)
+        return redirect(reverse("word_list", kwargs={"cts_urn": cts_urn}) + "?" + extra_query_params)
 
     text_edition = get_object_or_404(TextEdition, cts_urn=edition_urn)
-
-    order = request.GET.get("o")
-    mincore = request.GET.get("mincore")
-    maxcore = request.GET.get("maxcore")
-    page = request.GET.get("page")
 
     corpus_total, core_total = calc_overall_counts()
 
@@ -273,6 +286,7 @@ def word_list(request, cts_urn, response_format="html"):
             "lemma_count": lemma_count,
             "token_count": token_count,
             "token_total": total,
+            "extra_query_params": extra_query_params,
         })
 
     if response_format == "json":
