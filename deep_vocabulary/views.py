@@ -249,6 +249,7 @@ def word_list(request, cts_urn, response_format="html"):
     )
 
     lemma_count = len(vocabulary)
+    token_count = sum(lemma["count"] for lemma in vocabulary)
 
     if page == "all":
         lemmas = vocabulary
@@ -270,6 +271,7 @@ def word_list(request, cts_urn, response_format="html"):
             "ref": ref,
             "lemmas": lemmas,
             "lemma_count": lemma_count,
+            "token_count": token_count,
             "token_total": total,
         })
 
