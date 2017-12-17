@@ -21,6 +21,12 @@
   <section class="main">
     <div class="container">
 
+      <div class="text-right">
+        <a href="{% url 'reader_redirect' cts_urn %}" target="_blank">read in Scaife Viewer <i class="fa fa-external-link"></i></a>
+        <br>
+        <tt>{{ cts_urn}}</tt>
+      </div>
+
       <form>
         <input type="text" class="form-control form-control-sm col-2" name="reference" {% if ref %}value="{{ ref }}"{% endif %} placeholder="passage citation">
       </form>

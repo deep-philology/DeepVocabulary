@@ -5,7 +5,7 @@ from django.views.generic import TemplateView
 
 from django.contrib import admin
 
-from .views import lemma_list, lemma_detail, word_list, editions_list
+from .views import lemma_list, lemma_detail, word_list, editions_list, reader_redirect
 
 
 urlpatterns = [
@@ -19,6 +19,9 @@ urlpatterns = [
     url(r"^editions/$", editions_list, name="editions_list"),
     url(r"^word-list/(?P<cts_urn>[^/]+)/$", word_list, name="word_list"),
     url(r"^word-list/(?P<cts_urn>[^/]+)/(?P<response_format>json)/$", word_list, name="word_list_json"),
+
+    url(r"^rr/(?P<cts_urn>[^/]+)/$", reader_redirect, name="reader_redirect"),
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

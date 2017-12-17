@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator, Page
 from django.core.urlresolvers import reverse
 from django.db.models import Q, Sum
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .models import (Definition, Lemma, PassageLemma, TextEdition,
@@ -266,6 +266,7 @@ def word_list(request, cts_urn, response_format="html"):
 
     if response_format == "html":
         return render(request, "deep_vocabulary/word_list.html", {
+            "cts_urn": cts_urn,
             "text_edition": text_edition,
             "ref": ref,
             "lemmas": lemmas,
@@ -307,3 +308,13 @@ def word_list(request, cts_urn, response_format="html"):
         if links:
             response["Link"] = encode_link_header(links)
         return response
+
+
+def reader_redirect(request, cts_urn):
+    SCAIFE_HOST = "https://lk353.eu1.eldarioncloud.com"
+    if len(cts_urn.split(":")) == 4:
+        return redirect(f"{SCAIFE_HOST}/library/{cts_urn}/")
+    elif len(cts_urn.split(":")) == 5:
+        return redirect(f"{SCAIFE_HOST}/reader/{cts_urn}/")
+    else:
+        raise Http404()
