@@ -4,6 +4,7 @@ window.jQuery = window.$ = require('jquery');
 const $ = window.$;
 
 require('bootstrap/dist/js/bootstrap.bundle');
+require('bootstrap-slider');
 
 import ajaxSendMethod from './ajax';
 import handleMessageDismiss from './messages';
@@ -25,6 +26,14 @@ $(() => {
     $('#account_logout, .account_logout').click(e => {
         e.preventDefault();
         $('#accountLogOutForm').submit();
+    });
+
+    $('#ex12c').slider({
+      id: 'slider12c',
+      min: 0,
+      max: 10,
+      range: true,
+      value: [3, 7],
     });
 
     handleMessageDismiss();
