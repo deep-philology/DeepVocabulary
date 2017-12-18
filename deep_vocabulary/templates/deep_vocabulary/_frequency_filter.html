@@ -2,11 +2,11 @@
   <div class="text-center" style="border-bottom: 1px solid #CCC; margin-bottom: 5px;">frequency filter <span class="text-muted">(per 10k)</span></div>
   <div class="form-row">
     <div class="col" style="padding-right: 10px;">
-      <input type="radio" name="scope" value="corpus" id="corpus-scope">
+      <input type="radio" name="scope" value="corpus" id="corpus-scope"{% if request.GET.scope == "corpus" %} checked{% endif %}>
       <label for="corpus-scope" style="font-size: 12px; margin: 0;">
         <span></span>corpus</label>
       <br>
-      <input type="radio" name="scope" value="core" id="core-scope" checked>
+      <input type="radio" name="scope" value="core" id="core-scope"{% if request.GET.scope != "corpus" %} checked{% endif %}>
       <label for="core-scope" style="font-size: 12px; margin: 0;">
         <span></span>core</label>
     </div>
