@@ -11,7 +11,7 @@
         <span></span>core</label>
     </div>
     <div class="col text-center" style="padding: 12px 5px 0 5px;">
-      <input id="freq-filt-slider" type="text" name="freqrange" data-slider-value="{{ request.GET.freqrange }}"/>
+      <input id="freq-filt-slider" type="text" name="freqrange" data-value="{{ request.GET.freqrange }}"/>
       {% for k,v in request.GET.items %}
         {% if k != "page" and k != "freqrange" and k != "scope"%}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endif %}
       {% endfor %}

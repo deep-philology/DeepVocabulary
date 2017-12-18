@@ -31,7 +31,7 @@ $(() => {
     $('#freq-filt-slider').slider({
       id: 'frequency-filter-slider',
       range: true,
-      value: [0, 8],
+      value: $('#freq-filt-slider').data('value') ? $('#freq-filt-slider').data('value').split(',').map((x) => parseInt(x)) : [0, 8],
       ticks: [0, 1, 2, 3, 4, 5, 6, 7, 8],
       ticks_labels: ['', 0.1, 0.2, 0.5, 1, 2, 5, 10, ''],
       tooltip: 'hide',
