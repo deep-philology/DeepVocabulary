@@ -17,8 +17,8 @@ def lemma_list(request):
 
     query = request.GET.get("q")
     order = request.GET.get("o")
-    mincore = request.GET.get("mincore")
-    maxcore = request.GET.get("maxcore")
+    scope = request.GET.get("scope")
+    freqrange = request.GET.get("freqrange")
     page = request.GET.get("page")
 
     params = request.GET.copy()
@@ -26,16 +26,21 @@ def lemma_list(request):
         del params["page"]
     extra_query_params = urlencode(params)
 
-    if mincore:
+    if freqrange:
         try:
-            mincore = float(mincore)
+            mintick, maxtick = freqrange.split(",")
+            mintick = int(mintick)
+            if mintick in [0, 8]:
+                mintick = None
+            maxtick = int(maxtick)
+            if maxtick in [0, 8]:
+                maxtick = None
         except ValueError:
-            mincore = None
-    if maxcore:
-        try:
-            maxcore = float(maxcore)
-        except ValueError:
-            maxcore = None
+            mintick = None
+            maxtick = None
+    else:
+        mintick = None
+        maxtick = None
 
     if query:
         query = strip_accents(query).lower()
@@ -50,10 +55,20 @@ def lemma_list(request):
 
     corpus_total, core_total = calc_overall_counts()
 
-    if mincore:
-        lemma_list = lemma_list.filter(core_count__gte=mincore * core_total / 10000)
-    if maxcore:
-        lemma_list = lemma_list.filter(core_count__lte=maxcore * core_total / 10000)
+    if scope == "core":
+        if mintick:
+            mincount = [None, 0.1, 0.2, 0.5, 1, 2, 5, 10, None][mintick] * core_total / 10000
+            lemma_list = lemma_list.filter(core_count__gte=mincount)
+        if maxtick:
+            maxcount = [None, 0.1, 0.2, 0.5, 1, 2, 5, 10, None][maxtick] * core_total / 10000
+            lemma_list = lemma_list.filter(core_count__lte=maxcount)
+    elif scope == "corpus":
+        if mintick:
+            mincount = [None, 0.1, 0.2, 0.5, 1, 2, 5, 10, None][mintick] * corpus_total / 10000
+            lemma_list = lemma_list.filter(corpus_count__gte=mincount)
+        if maxtick:
+            maxcount = [None, 0.1, 0.2, 0.5, 1, 2, 5, 10, None][maxtick] * corpus_total / 10000
+            lemma_list = lemma_list.filter(corpus_count__lte=maxcount)
 
     lemma_list = lemma_list.order_by({
         "1": "-core_count",

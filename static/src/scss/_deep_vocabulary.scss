@@ -120,3 +120,45 @@ div.text-group {
 section.more-space {
   padding: 30px 0;
 }
+
+#frequency-filter-slider {
+  .slider-selection {
+    background: $perseus-red;
+  }
+  .slider-handle {
+  	background: $perseus-red;
+  }
+  .slider-tick {
+    display: none;
+  }
+  .slider-tick-label {
+    font-size: 12px;
+  }
+}
+
+.step-links {
+  white-space: nowrap;
+}
+
+input[type="radio"] {
+    display: none;
+}
+input[type="radio"] + label span {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin: -1px 4px 0 0;
+  vertical-align: middle;
+  cursor: pointer;
+  border-radius: 50%;
+  background-color: $white;
+}
+
+input[type="radio"]:checked + label span {
+  background-color: $perseus-red;
+}
+
+input[type="radio"] + label span,
+input[type="radio"]:checked + label span {
+  transition:background-color 0.2s linear;
+}

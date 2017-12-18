@@ -28,12 +28,13 @@ $(() => {
         $('#accountLogOutForm').submit();
     });
 
-    $('#ex12c').slider({
-      id: 'slider12c',
-      min: 0,
-      max: 10,
+    $('#freq-filt-slider').slider({
+      id: 'frequency-filter-slider',
       range: true,
-      value: [3, 7],
+      value: [0, 8],
+      ticks: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+      ticks_labels: ['', 0.1, 0.2, 0.5, 1, 2, 5, 10, ''],
+      tooltip: 'hide',
     });
 
     handleMessageDismiss();

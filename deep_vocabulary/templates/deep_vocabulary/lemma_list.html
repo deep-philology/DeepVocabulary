@@ -14,32 +14,56 @@
   <section class="main">
     <div class="container">
 
-      <form style="margin-bottom: 1em;">
-        <div class="row">
-          <div class="col-4">
-            <input type="text" class="form-control form-control-sm" name="q" value="{{ request.GET.q }}" placeholder="search">
+      <div class="row" style="margin-bottom: 2em;">
+        <div class="col-4" style="padding-top: 25px;">
+          <form>
+            <input type="text" class="form-control form-control-sm" name="q" value="{{ request.GET.q }}" placeholder="search (lemma or shortdef)">
             {% for k,v in request.GET.items %}
               {% if k != "page" and k != "q" %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endif %}
             {% endfor %}
-          </div>
-          <div class="col">
-            {% include "deep_vocabulary/_pagination.html" %}
-          </div>
-          <div class="col">
-            <input id="ex12c" type="text" />
-          </div>
+          </form>
         </div>
-      </form>
+        <div class="col-3 text-center" style="padding-top: 30px;">
+          {% include "deep_vocabulary/_pagination.html" %}
+        </div>
+        <div class="col">
+          <form style="background: #EEE; padding: 2px 10px 5px;">
+            <div class="text-center" style="border-bottom: 1px solid #CCC; margin-bottom: 5px;">frequency filter <span class="text-muted">(per 10k)</span></div>
+            <div class="form-row">
+              <div class="col">
+                <input type="radio" name="scope" value="corpus" id="corpus-scope">
+                <label for="corpus-scope" style="font-size: 12px; margin: 0;">
+                  <span></span>
+                  corpus</label>
+                <br>
+                <input type="radio" name="scope" value="core" id="core-scope" checked>
+                <label for="core-scope" style="font-size: 12px; margin: 0;">
+                  <span></span>
+                  core</label>
+              </div>
+              <div class="col" style="padding-top: 5px;">
+                <input id="freq-filt-slider" type="text" name="freqrange" data-slider-value="{{ request.GET.freqrange }}"/>
+                {% for k,v in request.GET.items %}
+                  {% if k != "page" and k != "freqrange" and k != "scope"%}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endif %}
+                {% endfor %}
+              </div>
+              <div class="col text-right" style="padding-top: 5px;">
+                <button class="btn btn-light">go</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
 
-      <table class="word-list table table-sm table-hover">
+      <table class="word-list table-sm table-striped">
         <thead>
           <tr>
-            <th>word
+            <th width="15%">word
             <th>shortdef
-            <th class="text-right">corpus count
-            <th class="text-right">core count
-            <th class="text-right">corpus freq.
-            <th class="text-right">core freq.
+            <th class="text-right" width="10%">corpus count
+            <th class="text-right" width="10%">core count
+            <th class="text-right" width="10%">corpus freq.
+            <th class="text-right" width="10%">core freq.
           </tr>
         </thead>
         {% for lemma in lemmas %}
