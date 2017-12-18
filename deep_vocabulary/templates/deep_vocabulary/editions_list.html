@@ -34,6 +34,9 @@
               <div class="col">
                 <tt>{{ edition.cts_urn }}</tt>
               </div>
+              <div class="col-md-1">
+                <a href="{% url 'reader_redirect' edition.cts_urn %}" target="_blank">read <i class="fa fa-external-link"></i></a>
+              </div>
             </div>
           {% endfor %}
         </div>
