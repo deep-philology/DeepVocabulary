@@ -1,0 +1,23 @@
+<form style="background: #EEE; padding: 2px 10px 5px;">
+  <div class="text-center" style="border-bottom: 1px solid #CCC; margin-bottom: 5px;">frequency filter <span class="text-muted">(per 10k)</span></div>
+  <div class="form-row">
+    <div class="col" style="padding-right: 10px;">
+      <input type="radio" name="scope" value="corpus" id="corpus-scope">
+      <label for="corpus-scope" style="font-size: 12px; margin: 0;">
+        <span></span>corpus</label>
+      <br>
+      <input type="radio" name="scope" value="core" id="core-scope" checked>
+      <label for="core-scope" style="font-size: 12px; margin: 0;">
+        <span></span>core</label>
+    </div>
+    <div class="col text-center" style="padding: 12px 5px 0 5px;">
+      <input id="freq-filt-slider" type="text" name="freqrange" data-slider-value="{{ request.GET.freqrange }}"/>
+      {% for k,v in request.GET.items %}
+        {% if k != "page" and k != "freqrange" and k != "scope"%}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endif %}
+      {% endfor %}
+    </div>
+    <div class="col text-right" style="padding-top: 5px;">
+      <button class="btn btn-light">go</button>
+    </div>
+  </div>
+</form>
