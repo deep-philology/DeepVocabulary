@@ -121,6 +121,11 @@ section.more-space {
   padding: 30px 0;
 }
 
+.word-list-controls {
+  margin-bottom: 20px;
+  align-items: center;
+}
+
 #frequency-filter-slider {
   .slider-selection {
     background: $perseus-red;
