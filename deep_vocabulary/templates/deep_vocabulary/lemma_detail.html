@@ -69,18 +69,35 @@
               <div class="card-body">
                 <span class="pull-right"><a href="{% url 'lemma_detail' object.pk %}">remove</a></span>
                 <h4 class="card-title"><a href="{% url 'word_list' filtered_edition.cts_urn %}">{{ filtered_edition.text_group_label }}, {{ filtered_edition.work_label }}</a></h4>
-                <p class="card-text">{{ filter }}</p>
+                <div class="card-text">
+                  <p><tt>{{ filter }}</tt></p>
+                  <a href="{% url 'reader_redirect' filter %}" target="_blank">read in Scaife Viewer <i class="fa fa-external-link"></i></a>
+                </div>
               </div>
             </div>
             {% if passages.count < 1000 %}
+              <table class="table table-sm">
+                <thead>
+                  <tr>
+                    <th>passage
+                    <th>&nbsp;
+                    <th>count
+                  </tr>
+                </thead>
               {% for lemma_passage in passages.all %}
-                <div class="passage">
-                  <span class="badge badge-primary pull-right">{{ lemma_passage.count }}</span>
-                  <a href="{% url 'word_list' lemma_passage.cts_urn %}">
-                    {{ lemma_passage.text_edition.work_label }}
-                    <b>{{ lemma_passage.reference }}</b>
-                  </a>
-                </div>
+                <tr>
+                  <th>
+                    {{ lemma_passage.reference }}
+                  </th>
+                  <td class="text-center">
+                    <a href="{% url 'word_list' lemma_passage.cts_urn %}">word list</a>
+                    <span class="text-muted">|</span>
+                    <a href="{% url 'reader_redirect' lemma_passage.cts_urn %}" target="_blank">read <i class="fa fa-external-link"></i></a>
+                  </td>
+                  <td class="text-right">
+                    {{ lemma_passage.count }}
+                  </td>
+                </tr>
               {% endfor %}
             {% else %}
               <p>Too many to show.</p>
