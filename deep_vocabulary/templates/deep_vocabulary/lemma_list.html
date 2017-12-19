@@ -14,6 +14,11 @@
   <section class="main">
     <div class="container">
 
+      <p class="corpus-stats">
+        <b>{{ corpus_total|intcomma }}</b> total tokens
+        (<b>{{ core_total|intcomma }}</b> in <a href="{% url 'editions_list' %}?core">core reading list</a>)
+      </p>
+
       <div class="row word-list-controls">
         <div class="col">
           {% include "deep_vocabulary/_search_form.html" %}
