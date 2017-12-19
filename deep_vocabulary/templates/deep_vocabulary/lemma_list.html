@@ -14,27 +14,34 @@
   <section class="main">
     <div class="container">
 
-      <form style="margin-bottom: 1em;">
-        <div class="row">
-          <div class="col-4">
-            <input type="text" class="form-control form-control-sm" name="q" value="{{ request.GET.q }}" placeholder="search">
-            <input type="hidden" name="o" value="{{ request.GET.o }}">
-          </div>
-          <div class="col">
-            {% include "deep_vocabulary/_pagination.html" %}
-          </div>
+      <div class="row word-list-controls">
+        <div class="col">
+          {% include "deep_vocabulary/_search_form.html" %}
         </div>
-      </form>
+        <div class="col">
+          {% include "deep_vocabulary/_frequency_filter.html" %}
+        </div>
+      </div>
 
-      <table class="word-list table table-sm table-hover">
+      <div class="row">
+        <div class="col">
+          {% include "deep_vocabulary/_pagination.html" %}
+        </div>
+        <div class="col text-right">
+          lemmas <b>{{ lemmas.start_index }}&ndash;{{ lemmas.end_index }}</b>
+          of <b>{{ lemma_count|intcomma }}</b>
+        </div>
+      </div>
+
+      <table class="word-list table-sm table-striped">
         <thead>
           <tr>
-            <th>word
+            <th width="15%">word
             <th>shortdef
-            <th class="text-right">corpus count
-            <th class="text-right">core count
-            <th class="text-right">corpus freq.
-            <th class="text-right">core freq.
+            <th class="text-right" width="10%">corpus count
+            <th class="text-right" width="10%">core count
+            <th class="text-right" width="10%">corpus freq.
+            <th class="text-right" width="10%">core freq.
           </tr>
         </thead>
         {% for lemma in lemmas %}
@@ -49,7 +56,10 @@
         {% endfor %}
       </table>
 
-      {% include "deep_vocabulary/_pagination.html" %}
+      <div class="text-right">
+        {% include "deep_vocabulary/_pagination.html" %}
+      </div>
+
     </div>
   </section>
 {% endblock %}

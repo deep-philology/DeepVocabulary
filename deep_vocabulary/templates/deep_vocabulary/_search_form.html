@@ -1,0 +1,19 @@
+<form class="search-form">
+  <div class="title">
+    search <span class="text-muted">(lemma or shortdef)</span>
+  </div>
+  <input
+    type="text" class="form-control form-control-sm"
+    name="q" value="{{ request.GET.q }}"
+  >
+  <div class="help-text">
+    lemmas are exact matches but can use <b>*</b> at start or end
+    e.g. λογ* or *της
+    <br>shortdefs just search for matching substrings
+  </div>
+  {% for k,v in request.GET.items %}
+    {% if k != "page" and k != "q" %}
+      <input type="hidden" name="{{ k }}" value="{{ v }}">
+    {% endif %}
+  {% endfor %}
+</form>

@@ -17,20 +17,30 @@ def lemma_list(request):
 
     query = request.GET.get("q")
     order = request.GET.get("o")
-    mincore = request.GET.get("mincore")
-    maxcore = request.GET.get("maxcore")
+    scope = request.GET.get("scope")
+    freqrange = request.GET.get("freqrange")
     page = request.GET.get("page")
 
-    if mincore:
+    params = request.GET.copy()
+    if "page" in params:
+        del params["page"]
+    extra_query_params = urlencode(params)
+
+    if freqrange:
         try:
-            mincore = float(mincore)
+            mintick, maxtick = freqrange.split(",")
+            mintick = int(mintick)
+            if mintick in [0, 8]:
+                mintick = None
+            maxtick = int(maxtick)
+            if maxtick in [0, 8]:
+                maxtick = None
         except ValueError:
-            mincore = None
-    if maxcore:
-        try:
-            maxcore = float(maxcore)
-        except ValueError:
-            maxcore = None
+            mintick = None
+            maxtick = None
+    else:
+        mintick = None
+        maxtick = None
 
     if query:
         query = strip_accents(query).lower()
@@ -45,10 +55,20 @@ def lemma_list(request):
 
     corpus_total, core_total = calc_overall_counts()
 
-    if mincore:
-        lemma_list = lemma_list.filter(core_count__gte=mincore * core_total / 10000)
-    if maxcore:
-        lemma_list = lemma_list.filter(core_count__lte=maxcore * core_total / 10000)
+    if scope == "core":
+        if mintick:
+            mincount = [None, 0.1, 0.2, 0.5, 1, 2, 5, 10, None][mintick] * core_total / 10000
+            lemma_list = lemma_list.filter(core_count__gte=mincount)
+        if maxtick:
+            maxcount = [None, 0.1, 0.2, 0.5, 1, 2, 5, 10, None][maxtick] * core_total / 10000
+            lemma_list = lemma_list.filter(core_count__lte=maxcount)
+    elif scope == "corpus":
+        if mintick:
+            mincount = [None, 0.1, 0.2, 0.5, 1, 2, 5, 10, None][mintick] * corpus_total / 10000
+            lemma_list = lemma_list.filter(corpus_count__gte=mincount)
+        if maxtick:
+            maxcount = [None, 0.1, 0.2, 0.5, 1, 2, 5, 10, None][maxtick] * corpus_total / 10000
+            lemma_list = lemma_list.filter(corpus_count__lte=maxcount)
 
     lemma_list = lemma_list.order_by({
         "1": "-core_count",
@@ -56,6 +76,7 @@ def lemma_list(request):
         "3": "sort_key",
     }.get(order, "-core_count"))
 
+    lemma_count = lemma_list.count()
     paginator = Paginator(lemma_list, 20)
 
     try:
@@ -67,6 +88,8 @@ def lemma_list(request):
 
     return render(request, "deep_vocabulary/lemma_list.html", {
         "lemmas": lemmas,
+        "lemma_count": lemma_count,
+        "extra_query_params": extra_query_params,
     })
 
 
@@ -149,36 +172,45 @@ def word_list(request, cts_urn, response_format="html"):
         edition_urn = cts_urn
         ref = None
 
+    order = request.GET.get("o")
+    scope = request.GET.get("scope")
+    freqrange = request.GET.get("freqrange")
+    page = request.GET.get("page")
+
+    params = request.GET.copy()
+    if "page" in params:
+        del params["page"]
+    if "reference" in params:
+        del params["reference"]
+    extra_query_params = urlencode(params)
+
     if "reference" in request.GET:
         if request.GET.get("reference"):
             cts_urn = edition_urn + ":" + request.GET.get("reference")
         else:
             cts_urn = edition_urn
-        return redirect("word_list", cts_urn=cts_urn)
+        return redirect(reverse("word_list", kwargs={"cts_urn": cts_urn}) + "?" + extra_query_params)
 
     text_edition = get_object_or_404(TextEdition, cts_urn=edition_urn)
 
-    order = request.GET.get("o")
-    mincore = request.GET.get("mincore")
-    maxcore = request.GET.get("maxcore")
-    page = request.GET.get("page")
-
     corpus_total, core_total = calc_overall_counts()
 
-    min_core_count = 0
-    if mincore:
+    # @@@ remove this duplication with lemma_list
+    if freqrange:
         try:
-            mincore = float(mincore)
-            min_core_count = mincore * core_total / 10000
+            mintick, maxtick = freqrange.split(",")
+            mintick = int(mintick)
+            if mintick in [0, 8]:
+                mintick = None
+            maxtick = int(maxtick)
+            if maxtick in [0, 8]:
+                maxtick = None
         except ValueError:
-            mincore = None
-    max_core_count = 10000000
-    if maxcore:
-        try:
-            maxcore = float(maxcore)
-            max_core_count = maxcore * core_total / 10000
-        except ValueError:
-            maxcore = None
+            mintick = None
+            maxtick = None
+    else:
+        mintick = None
+        maxtick = None
 
     if ref:
         if "-" in ref:
@@ -189,10 +221,28 @@ def word_list(request, cts_urn, response_format="html"):
     else:
         ref_filter = Q()
 
+    # @@@ try to reduce duplication here with lemma_list
+    freq_filter = Q()
+    if scope == "core":
+        if mintick:
+            mincount = [None, 0.1, 0.2, 0.5, 1, 2, 5, 10, None][mintick] * core_total / 10000
+            freq_filter &= Q(lemma__core_count__gte=mincount)
+        if maxtick:
+            maxcount = [None, 0.1, 0.2, 0.5, 1, 2, 5, 10, None][maxtick] * core_total / 10000
+            freq_filter &= Q(lemma__core_count__lte=maxcount)
+    elif scope == "corpus":
+        if mintick:
+            mincount = [None, 0.1, 0.2, 0.5, 1, 2, 5, 10, None][mintick] * corpus_total / 10000
+            freq_filter &= Q(lemma__corpus_count__gte=mincount)
+        if maxtick:
+            maxcount = [None, 0.1, 0.2, 0.5, 1, 2, 5, 10, None][maxtick] * corpus_total / 10000
+            freq_filter &= Q(lemma__corpus_count__lte=maxcount)
+
     passage_lemmas = dict(
         PassageLemma.objects.filter(
             Q(text_edition=text_edition),
             ref_filter,
+            freq_filter,
         ).values_list("lemma").annotate(total=Sum("count"))
     )
     definitions = dict(
@@ -242,13 +292,13 @@ def word_list(request, cts_urn, response_format="html"):
                 ) if (not ref and lemma_data[lemma_id][2] != 0 and passage_lemmas[lemma_id] > 1) else None,
             }
             for lemma_id in passage_lemmas.keys()
-            if min_core_count <= lemma_data[lemma_id][2] <= max_core_count
         ],
         key=sort_key,
         reverse=sort_reverse,
     )
 
     lemma_count = len(vocabulary)
+    token_count = sum(lemma["count"] for lemma in vocabulary)
 
     if page == "all":
         lemmas = vocabulary
@@ -271,7 +321,9 @@ def word_list(request, cts_urn, response_format="html"):
             "ref": ref,
             "lemmas": lemmas,
             "lemma_count": lemma_count,
+            "token_count": token_count,
             "token_total": total,
+            "extra_query_params": extra_query_params,
         })
 
     if response_format == "json":

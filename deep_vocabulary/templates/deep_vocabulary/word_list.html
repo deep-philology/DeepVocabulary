@@ -7,42 +7,56 @@
 {% block body_base %}
   <section class="hero">
     <div class="container">
-      <h2>
-        {% if ref %}
-          <a href="{% url 'word_list' text_edition.cts_urn %}">{{ text_edition.text_group_label }}, {{ text_edition.work_label }}{% if text_edition.is_core %}*{% endif %}</a> {{ ref }}
-        {% else %}
-          {{ text_edition.text_group_label }}, {{ text_edition.work_label }}{% if text_edition.is_core %}*{% endif %}
-        {% endif %}
-      </h2>
-      <h1>Word List</h1>
+      <div class="row">
+        <div class="col">
+          <h2>
+            {% if ref %}
+              <a href="{% url 'word_list' text_edition.cts_urn %}">{{ text_edition.text_group_label }}, {{ text_edition.work_label }}{% if text_edition.is_core %}*{% endif %}</a> {{ ref }}
+            {% else %}
+              {{ text_edition.text_group_label }}, {{ text_edition.work_label }}{% if text_edition.is_core %}*{% endif %}
+            {% endif %}
+          </h2>
+          <h1>Word List</h1>
+        </div>
+        <div class="col text-right">
+          <div><tt>{{ cts_urn}}</tt></div>
+          <div><a href="{% url 'reader_redirect' cts_urn %}" target="_blank">read in Scaife Viewer <i class="fa fa-external-link"></i></a></div>
+        </div>
+      </div>
     </div>
   </section>
 
   <section class="main">
     <div class="container">
 
-      <div class="text-right">
-        <a href="{% url 'reader_redirect' cts_urn %}" target="_blank">read in Scaife Viewer <i class="fa fa-external-link"></i></a>
-        <br>
-        <tt>{{ cts_urn}}</tt>
+      <div class="row word-list-controls">
+        <div class="col">
+          {% include "deep_vocabulary/_passage_citation_form.html" %}
+        </div>
+        <div class="col">
+          {% include "deep_vocabulary/_frequency_filter.html" %}
+        </div>
       </div>
 
-      <form>
-        <input type="text" class="form-control form-control-sm col-2" name="reference" {% if ref %}value="{{ ref }}"{% endif %} placeholder="passage citation">
-      </form>
-      <p class="lead text-right">
-        {{ lemma_count|intcomma }} lemma{{ lemma_count|pluralize }};
-        {{ token_total|intcomma }} token{{ token_total|pluralize }}
-      </p>
-
-      <p>
-        {% if lemmas.paginator %}
-          {% include "deep_vocabulary/_pagination.html" %}
-          <a style="margin-left: 1em" href="?{% if request.GET.o %}o={{ request.GET.o }}&amp;{% endif %}page=all">SHOW ALL</a>
-        {% else %}
-          <a href="?{% if request.GET.o %}o={{ request.GET.o }}&amp;{% endif %}page=1">PAGINATE</a>
-        {% endif %}
-      </p>
+      <div class="row">
+        <div class="col">
+          {% if lemmas.paginator %}
+            {% include "deep_vocabulary/_pagination.html" %}
+            <a style="margin-left: 1em" href="?{% if extra_query_params %}{{ extra_query_params }}&amp;{% endif %}page=all">SHOW ALL</a>
+          {% else %}
+            <a href="?{% if extra_query_params %}{{ extra_query_params }}&amp;{% endif %}page=1">PAGINATE</a>
+          {% endif %}
+        </div>
+        <div class="col text-right">
+          {% if lemmas.paginator %}
+            <b>{{ lemmas.start_index }}&ndash;{{ lemmas.end_index }}</b>
+          of <b>{{ lemma_count|intcomma }}</b> lemma{{ lemma_count|pluralize }};
+          {% else %}
+            <b>{{ lemma_count|intcomma }}</b> lemma{{ lemma_count|pluralize }};
+          {% endif %}
+          <b>{{ token_count|intcomma }}</b> token{{ token_count|pluralize }}
+        </div>
+      </div>
 
       <table class="word-list table table-sm table-hover">
         <thead>
