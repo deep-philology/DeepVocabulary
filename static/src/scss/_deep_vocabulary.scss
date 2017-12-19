@@ -79,11 +79,11 @@ section.hero {
     font-family: 'Noto Serif';
     font-size: 28px;
     margin: 0;
-    a {
-      color: lighten($perseus-red, 30%);
-      &:hover {
-        text-decoration: none;
-      }
+  }
+  a {
+    color: lighten($perseus-red, 30%);
+    &:hover {
+      text-decoration: none;
     }
   }
 }
