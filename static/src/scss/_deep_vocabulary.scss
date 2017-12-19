@@ -195,3 +195,19 @@ input[type="radio"] + label span,
 input[type="radio"]:checked + label span {
   transition:background-color 0.2s linear;
 }
+
+.table-sm tr.sortable {
+  th {
+    padding: 0;
+    a, span {
+      display: block;
+      padding: 0.3rem 0.5rem;
+    }
+  }
+  a {
+    color: inherit;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}

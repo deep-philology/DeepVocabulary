@@ -21,11 +21,6 @@ def lemma_list(request):
     freqrange = request.GET.get("freqrange")
     page = request.GET.get("page")
 
-    params = request.GET.copy()
-    if "page" in params:
-        del params["page"]
-    extra_query_params = urlencode(params)
-
     if freqrange:
         try:
             mintick, maxtick = freqrange.split(",")
@@ -71,9 +66,12 @@ def lemma_list(request):
             lemma_list = lemma_list.filter(corpus_count__lte=maxcount)
 
     lemma_list = lemma_list.order_by({
-        "1": "-core_count",
-        "2": "-corpus_count",
-        "3": "sort_key",
+        "-1": "-sort_key",
+        "1": "sort_key",
+        "-2": "-core_count",
+        "2": "core_count",
+        "-3": "-corpus_count",
+        "3": "corpus_count",
     }.get(order, "-core_count"))
 
     lemma_count = lemma_list.count()
@@ -89,7 +87,6 @@ def lemma_list(request):
     return render(request, "deep_vocabulary/lemma_list.html", {
         "lemmas": lemmas,
         "lemma_count": lemma_count,
-        "extra_query_params": extra_query_params,
     })
 
 
@@ -263,16 +260,34 @@ def word_list(request, cts_urn, response_format="html"):
     total = sum(passage_lemmas.values())
     corpus_total, core_total = calc_overall_counts()
 
-    if order == "3":  # text (by sort_key)
+    if order == "1":  # text (by sort_key)
         sort_key = itemgetter("sort_key")
         sort_reverse = False
-    elif order == "4":  # log ratio descending
-        sort_key = lambda x: x["ratio"] if x["ratio"] else 1  # noqa: E731
+    elif order == "-1":  # text (by sort_key)
+        sort_key = itemgetter("sort_key")
         sort_reverse = True
-    elif order == "5":  # log ratio ascending
+    elif order == "2":  # core count ascending
+        sort_key = itemgetter("core_frequency")
+        sort_reverse = False
+    elif order == "-2":  # core count descending
+        sort_key = itemgetter("core_frequency")
+        sort_reverse = True
+    elif order == "3":  # corpus count ascending
+        sort_key = itemgetter("corpus_frequency")
+        sort_reverse = False
+    elif order == "-3":  # corpus count descending
+        sort_key = itemgetter("corpus_frequency")
+        sort_reverse = True
+    elif order == "4":  # log ratio ascending
         sort_key = lambda x: x["ratio"] if x["ratio"] else 1  # noqa: E731
         sort_reverse = False
-    else:  # usually "1" but also default: count descending
+    elif order == "-4":  # log ratio descending
+        sort_key = lambda x: x["ratio"] if x["ratio"] else 1  # noqa: E731
+        sort_reverse = True
+    elif order == "5":  # count ascending
+        sort_key = itemgetter("count")
+        sort_reverse = False
+    else:  # usually "-5" but also default: count descending
         sort_key = itemgetter("count")
         sort_reverse = True
 
@@ -323,7 +338,6 @@ def word_list(request, cts_urn, response_format="html"):
             "lemma_count": lemma_count,
             "token_count": token_count,
             "token_total": total,
-            "extra_query_params": extra_query_params,
         })
 
     if response_format == "json":

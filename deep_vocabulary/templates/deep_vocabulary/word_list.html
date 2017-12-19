@@ -1,6 +1,6 @@
 {% extends "site_base.html" %}
 
-{% load humanize %}
+{% load humanize query_help %}
 
 {% block head_title %}{{ text_edition.text_group_label }}, {{ text_edition.work_label }}{% if ref %} {{ ref }}{% endif %}{% endblock %}
 
@@ -42,9 +42,9 @@
         <div class="col">
           {% if lemmas.paginator %}
             {% include "deep_vocabulary/_pagination.html" %}
-            <a style="margin-left: 1em" href="?{% if extra_query_params %}{{ extra_query_params }}&amp;{% endif %}page=all">SHOW ALL</a>
+            <a style="margin-left: 1em" href="?{% query page='all' %}">SHOW ALL</a>
           {% else %}
-            <a href="?{% if extra_query_params %}{{ extra_query_params }}&amp;{% endif %}page=1">PAGINATE</a>
+            <a href="?{% query page=1 %}">PAGINATE</a>
           {% endif %}
         </div>
         <div class="col text-right">
@@ -58,32 +58,73 @@
         </div>
       </div>
 
-      <table class="word-list table table-sm table-hover">
+      <table class="word-list table table-sm table-striped">
         <thead>
-          <tr>
-            <th>word
-            <th>shortdef
-            <th class="text-right">count
-            <th class="text-right">frequency
-            <th class="text-right">corpus&nbsp;freq.
-            <th class="text-right">core&nbsp;freq.
+          <tr class="sortable">
+            <th width="15%">
+              {% if request.GET.o == "1" %}
+                <a href="?{% query o="-1" page="" %}"><i class="fa fa-sort-asc"></i> word</a>
+              {% elif request.GET.o == "-1" %}
+                <a href="?{% query o="1" page="" %}"><i class="fa fa-sort-desc"></i> word</a>
+              {% else %}
+                <a href="?{% query o="-1" page="" %}"> word</a>
+              {% endif %}
+            </th>
+            <th><span>shortdef</span></th>
+            <th colspan=2 class="text-right" width="18%">
+              {% if request.GET.o == "5" %}
+                <a href="?{% query o="-5" page="" %}"><i class="fa fa-sort-asc"></i> count (frequency)</a>
+              {% elif request.GET.o == "-5" %}
+                <a href="?{% query o="5" page="" %}"><i class="fa fa-sort-desc"></i> count (frequency)</a>
+              {% else %}
+                <a href="?{% query o="-5" page="" %}">count (frequency)</a>
+              {% endif %}
+            </th>
+            <th class="text-right" width="10%">
+              {% if request.GET.o == "3" %}
+                <a href="?{% query o="-3" page="" %}"><i class="fa fa-sort-asc"></i> corpus</a>
+              {% elif request.GET.o == "-3" %}
+                <a href="?{% query o="3" page="" %}"><i class="fa fa-sort-desc"></i> corpus</a>
+              {% else %}
+                <a href="?{% query o="-3" page="" %}">corpus</a>
+              {% endif %}
+            </th>
+            <th class="text-right" width="10%">
+              {% if request.GET.o == "2" %}
+                <a href="?{% query o="-2" page="" %}"><i class="fa fa-sort-asc"></i> core</a>
+              {% elif request.GET.o == "-2" %}
+                <a href="?{% query o="2" page="" %}"><i class="fa fa-sort-desc"></i> core</a>
+              {% else %}
+                <a href="?{% query o="-2" page="" %}">core</a>
+              {% endif %}
+            </th>
             {% if not ref %}
-              <th class="text-center">log&nbsp;ratio
+              <th class="text-center" width="15%">
+                {% if request.GET.o == "4" %}
+                  <a href="?{% query o="-4" page="" %}"><i class="fa fa-sort-asc"></i> log&nbsp;ratio</a>
+                {% elif request.GET.o == "-4" %}
+                  <a href="?{% query o="4" page="" %}"><i class="fa fa-sort-desc"></i> log&nbsp;ratio</a>
+                {% else %}
+                  <a href="?{% query o="-4" page="" %}">log&nbsp;ratio</a>
+                {% endif %}
+              </th>
             {% endif %}
           </tr>
         </thead>
         {% for item in lemmas %}
-          <tr{% if item.boosted %} class="table-info"{% endif %}>
+          <tr>
             <th class="lemma_text"><a href="{% url 'lemma_detail' item.lemma_id %}?filter={{ text_edition.cts_urn }}">{{ item.lemma_text }}</a>
             <td class="shortdef">{{ item.shortdef }}
             <td class="count">{{ item.count|intcomma }}
-            <td class="frequency">{{ item.frequency }}
-            <td class="frequency">{{ item.corpus_frequency }}
-            <td class="frequency">{{ item.core_frequency }}
+            <td class="frequency">({{ item.frequency }})
+            <td class="frequency">({{ item.corpus_frequency }})
+            <td class="frequency">({{ item.core_frequency }})
             {% if not ref %}
-            <td class="frequency text-center">{% spaceless %}
+            <td class="frequency text-center" style="white-space: nowrap;">{% spaceless %}
               {% if item.ratio is not None %}
                 {% include "deep_vocabulary/_ratio.html" %}
+              {% else %}
+                <span class="text-muted">too few</span>
               {% endif %}
               {% endspaceless %}
             </td>
@@ -95,9 +136,9 @@
       <p>
         {% if lemmas.paginator %}
           {% include "deep_vocabulary/_pagination.html" %}
-          <a style="margin-left: 1em" href="?{% if request.GET.o %}o={{ request.GET.o }}&amp;{% endif %}page=all">SHOW ALL</a>
+          <a style="margin-left: 1em" href="?{% query page='all' %}">SHOW ALL</a>
         {% else %}
-          <a href="?{% if request.GET.o %}o={{ request.GET.o }}&amp;{% endif %}page=1">PAGINATE</a>
+          <a href="?{% query page=1 %}">PAGINATE</a>
         {% endif %}
       </p>
 

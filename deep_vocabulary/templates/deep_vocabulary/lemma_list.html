@@ -1,6 +1,6 @@
 {% extends "site_base.html" %}
 
-{% load humanize %}
+{% load humanize query_help %}
 
 {% block head_title %}Lemma List{% if lemmas.number > 1 %} page {{ lemmas.number}}{% endif %}{% endblock %}
 
@@ -35,23 +35,45 @@
 
       <table class="word-list table table-sm table-striped">
         <thead>
-          <tr>
-            <th width="15%">word
-            <th>shortdef
-            <th class="text-right" width="10%">corpus count
-            <th class="text-right" width="10%">core count
-            <th class="text-right" width="10%">corpus freq.
-            <th class="text-right" width="10%">core freq.
+          <tr class="sortable">
+            <th width="15%">
+              {% if request.GET.o == "1" %}
+                <a href="?{% query o="-1" page="" %}"><i class="fa fa-sort-asc"></i> word</a>
+              {% elif request.GET.o == "-1" %}
+                <a href="?{% query o="1" page="" %}"><i class="fa fa-sort-desc"></i> word</a>
+              {% else %}
+                <a href="?{% query o="-1" page="" %}"> word</a>
+              {% endif %}
+            </th>
+            <th><span>shortdef</span>
+            <th colspan=2 class="text-right" width="20%">
+              {% if request.GET.o == "3" %}
+                <a href="?{% query o="-3" page="" %}"><i class="fa fa-sort-asc"></i> corpus count (freq.)</a>
+              {% elif request.GET.o == "-3" %}
+                <a href="?{% query o="3" page="" %}"><i class="fa fa-sort-desc"></i> corpus count (freq.)</a>
+              {% else %}
+                <a href="?{% query o="-3" page="" %}">corpus count (freq.)</a>
+              {% endif %}
+            </th>
+            <th colspan=2 class="text-right" width="20%">
+              {% if request.GET.o == "2" %}
+                <a href="?{% query o="-2" page="" %}"><i class="fa fa-sort-asc"></i> core count (freq.)</a>
+              {% elif request.GET.o == "-2" %}
+                <a href="?{% query o="2" page="" %}"><i class="fa fa-sort-desc"></i> core count (freq.)</a>
+              {% else %}
+                <a href="?{% query o="-2" page="" %}">core count (freq.)</a>
+              {% endif %}
+            </th>
           </tr>
         </thead>
         {% for lemma in lemmas %}
-          <tr{% if item.boosted %} class="table-info"{% endif %}>
+          <tr>
             <th class="lemma_text"><a href="{% url 'lemma_detail' lemma.pk %}">{{ lemma.text }}</a>
             <td class="shortdef">{{ lemma.definitions.all.0.shortdef }}
             <td class="count">{{ lemma.corpus_count|intcomma }}
+            <td class="count">({{ lemma.frequencies.0 }})
             <td class="count">{{ lemma.core_count|intcomma }}
-            <td class="count">{{ lemma.frequencies.0 }}
-            <td class="count">{{ lemma.frequencies.1 }}
+            <td class="count">({{ lemma.frequencies.1 }})
           </tr>
         {% endfor %}
       </table>

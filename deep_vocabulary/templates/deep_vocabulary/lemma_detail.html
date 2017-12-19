@@ -49,9 +49,9 @@
               {% for edition in editions %}
                 <tr{% if filter == edition.text_edition.cts_urn %} class="table-active"{% endif %}>
                   <td><a href="{% url 'lemma_detail' object.pk %}?filter={{ edition.text_edition.cts_urn }}">{{ edition.text_edition.work_label }}</a>{% if edition.text_edition.is_core %}*{% endif %}
-                  <td class="text-right">{{ edition.lemma_count|intcomma }}
-                  <td class="text-right">{{ edition.frequency }}
-                  <td class="frequency text-center">{% spaceless %}
+                  <td width="10%" class="text-right">{{ edition.lemma_count|intcomma }}
+                  <td width="10%" class="text-right">{{ edition.frequency }}
+                  <td width="20%" class="frequency text-center" style="white-space: nowrap;">{% spaceless %}
                     {% if edition.ratio is not None %}
                       {% include "deep_vocabulary/_ratio.html" with item=edition %}
                     {% endif %}
