@@ -8,3 +8,7 @@
     background: $gray-400;
   }
 }
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background: $gray-200;
+}
