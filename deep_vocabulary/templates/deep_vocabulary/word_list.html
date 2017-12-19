@@ -27,12 +27,20 @@
         <tt>{{ cts_urn}}</tt>
       </div>
 
-      <form>
-        <input type="text" class="form-control form-control-sm col-2" name="reference" {% if ref %}value="{{ ref }}"{% endif %} placeholder="passage citation">
-        {% for k,v in request.GET.items %}
-          {% if k != "page" %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endif %}
-        {% endfor %}
-      </form>
+      <div class="row word-list-controls">
+        <div class="col">
+          <form>
+            <input type="text" class="form-control form-control-sm col-2" name="reference" {% if ref %}value="{{ ref }}"{% endif %} placeholder="passage citation">
+            {% for k,v in request.GET.items %}
+              {% if k != "page" %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endif %}
+            {% endfor %}
+          </form>
+        </div>
+        <div class="col">
+          {% include "deep_vocabulary/_frequency_filter.html" %}
+        </div>
+      </div>
+
       <p class="lead text-right">
         {{ lemma_count|intcomma }} lemma{{ lemma_count|pluralize }};
         {{ token_count|intcomma }} token{{ token_count|pluralize }}
