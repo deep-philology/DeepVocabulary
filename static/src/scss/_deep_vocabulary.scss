@@ -126,6 +126,25 @@ section.more-space {
   align-items: center;
 }
 
+.frequency-filter {
+  background: #EEE;
+  padding: 2px 10px 5px;
+  .title {
+    text-align: center;
+    border-bottom: 1px solid #CCC;
+    margin-bottom: 5px;
+  }
+  .frequency-filter-controls {
+    align-items: center;
+    .col {
+      padding: 5px;
+    }
+    .scope-controls label {
+       font-size: 12px;
+       margin: 0;
+    }
+  }
+}
 #frequency-filter-slider {
   .slider-selection {
     background: $perseus-red;
