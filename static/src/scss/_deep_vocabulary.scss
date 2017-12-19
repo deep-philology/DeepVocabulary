@@ -126,7 +126,8 @@ section.more-space {
   margin-bottom: 20px;
 }
 
-.search-form, .passage-citation-form {
+.search-form, .passage-citation-form, .frequency-filter {
+  height: 100%;
   background: #EEE;
   padding: 2px 10px 5px;
   .title {
@@ -143,23 +144,14 @@ section.more-space {
   }
 }
 
-.frequency-filter {
-  background: #EEE;
-  padding: 2px 10px 5px;
-  .title {
-    text-align: center;
-    border-bottom: 1px solid #CCC;
-    margin-bottom: 5px;
+.frequency-filter-controls {
+  align-items: center;
+  .col {
+    padding: 5px;
   }
-  .frequency-filter-controls {
-    align-items: center;
-    .col {
-      padding: 5px;
-    }
-    .scope-controls label {
-       font-size: 12px;
-       margin: 0;
-    }
+  .scope-controls label {
+     font-size: 12px;
+     margin: 0;
   }
 }
 #frequency-filter-slider {

@@ -28,8 +28,8 @@
           {% include "deep_vocabulary/_pagination.html" %}
         </div>
         <div class="col text-right">
-          lemmas {{ lemmas.start_index }}&ndash;{{ lemmas.end_index }}
-          of {{ lemma_count|intcomma }}
+          lemmas <b>{{ lemmas.start_index }}&ndash;{{ lemmas.end_index }}</b>
+          of <b>{{ lemma_count|intcomma }}</b>
         </div>
       </div>
 
@@ -56,7 +56,9 @@
         {% endfor %}
       </table>
 
-      {% include "deep_vocabulary/_pagination.html" %}
+      <div class="text-right">
+        {% include "deep_vocabulary/_pagination.html" %}
+      </div>
 
     </div>
   </section>

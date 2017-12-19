@@ -49,12 +49,12 @@
         </div>
         <div class="col text-right">
           {% if lemmas.paginator %}
-            {{ lemmas.start_index }}&ndash;{{ lemmas.end_index }}
-          of {{ lemma_count|intcomma }} lemma{{ lemma_count|pluralize }};
+            <b>{{ lemmas.start_index }}&ndash;{{ lemmas.end_index }}</b>
+          of <b>{{ lemma_count|intcomma }}</b> lemma{{ lemma_count|pluralize }};
           {% else %}
-            {{ lemma_count|intcomma }} lemma{{ lemma_count|pluralize }};
+            <b>{{ lemma_count|intcomma }}</b> lemma{{ lemma_count|pluralize }};
           {% endif %}
-          {{ token_count|intcomma }} token{{ token_count|pluralize }}
+          <b>{{ token_count|intcomma }}</b> token{{ token_count|pluralize }}
         </div>
       </div>
 
