@@ -1,11 +1,13 @@
+{% load query_help %}
+
 <span class="step-links">
   {% if lemmas.number > 1 %}
-    <a href="?{% if extra_query_params %}{{ extra_query_params }}&amp;{% endif %}page=1"><i class="fa fa-step-backward"></i></a>
+    <a href="?{% query page=1 %}"><i class="fa fa-step-backward"></i></a>
   {% else %}
     <span class="text-muted"><i class="fa fa-step-backward"></i></span>
   {% endif %}
   {% if lemmas.has_previous %}
-    <a href="?{% if extra_query_params %}{{ extra_query_params }}&amp;{% endif %}page={{ lemmas.previous_page_number }}"><i class="fa fa-backward"></i></a>
+    <a href="?{% query page=lemmas.previous_page_number %}"><i class="fa fa-backward"></i></a>
   {% else %}
     <span class="text-muted"><i class="fa fa-backward"></i></span>
   {% endif %}
@@ -15,12 +17,12 @@
   </span>
 
   {% if lemmas.has_next %}
-    <a href="?{% if extra_query_params %}{{ extra_query_params }}&amp;{% endif %}page={{ lemmas.next_page_number }}"><i class="fa fa-forward"></i></a>
+    <a href="?{% query page=lemmas.next_page_number %}"><i class="fa fa-forward"></i></a>
   {% else %}
     <span class="text-muted"><i class="fa fa-forward"></i></span>
   {% endif %}
   {% if lemmas.number < lemmas.paginator.num_pages %}
-    <a href="?{% if extra_query_params %}{{ extra_query_params }}&amp;{% endif %}page={{ lemmas.paginator.num_pages }}"><i class="fa fa-step-forward"></i></a>
+    <a href="?{% query page=lemmas.paginator.num_pages %}"><i class="fa fa-step-forward"></i></a>
   {% else %}
     <span class="text-muted"><i class="fa fa-step-forward"></i></span>
   {% endif %}

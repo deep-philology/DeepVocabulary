@@ -128,11 +128,11 @@ section.more-space {
 
 .search-form, .passage-citation-form, .frequency-filter {
   height: 100%;
-  background: #EEE;
+  background: $gray-200;
   padding: 2px 10px 5px;
   .title {
     text-align: center;
-    border-bottom: 1px solid #CCC;
+    border-bottom: 1px solid $gray-400;
     margin-bottom: 5px;
   }
   .help-text {
@@ -194,4 +194,20 @@ input[type="radio"]:checked + label span {
 input[type="radio"] + label span,
 input[type="radio"]:checked + label span {
   transition:background-color 0.2s linear;
+}
+
+.table-sm tr.sortable {
+  th {
+    padding: 0;
+    a, span {
+      display: block;
+      padding: 0.3rem 0.5rem;
+    }
+  }
+  a {
+    color: inherit;
+    &:hover {
+      text-decoration: none;
+    }
+  }
 }
