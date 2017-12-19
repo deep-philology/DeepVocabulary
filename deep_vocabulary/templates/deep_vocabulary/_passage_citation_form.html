@@ -1,0 +1,12 @@
+<form class="passage-citation-form">
+  <div class="title">
+    passage citation
+  </div>
+  <input type="text" class="form-control form-control-sm" name="reference" {% if ref %}value="{{ ref }}"{% endif %}>
+  <div class="help-text">
+    e.g. 3 or 2.5 or 7.1-7.50 (as appropriate for text)
+  </div>
+  {% for k,v in request.GET.items %}
+    {% if k != "page" %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endif %}
+  {% endfor %}
+</form>

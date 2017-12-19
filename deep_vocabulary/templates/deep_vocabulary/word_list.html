@@ -29,31 +29,32 @@
 
       <div class="row word-list-controls">
         <div class="col">
-          <form>
-            <input type="text" class="form-control form-control-sm col-2" name="reference" {% if ref %}value="{{ ref }}"{% endif %} placeholder="passage citation">
-            {% for k,v in request.GET.items %}
-              {% if k != "page" %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endif %}
-            {% endfor %}
-          </form>
+          {% include "deep_vocabulary/_passage_citation_form.html" %}
         </div>
         <div class="col">
           {% include "deep_vocabulary/_frequency_filter.html" %}
         </div>
       </div>
 
-      <p class="lead text-right">
-        {{ lemma_count|intcomma }} lemma{{ lemma_count|pluralize }};
-        {{ token_count|intcomma }} token{{ token_count|pluralize }}
-      </p>
-
-      <p>
-        {% if lemmas.paginator %}
-          {% include "deep_vocabulary/_pagination.html" %}
-          <a style="margin-left: 1em" href="?{% if extra_query_params %}{{ extra_query_params }}&amp;{% endif %}page=all">SHOW ALL</a>
-        {% else %}
-          <a href="?{% if extra_query_params %}{{ extra_query_params }}&amp;{% endif %}page=1">PAGINATE</a>
-        {% endif %}
-      </p>
+      <div class="row">
+        <div class="col">
+          {% if lemmas.paginator %}
+            {% include "deep_vocabulary/_pagination.html" %}
+            <a style="margin-left: 1em" href="?{% if extra_query_params %}{{ extra_query_params }}&amp;{% endif %}page=all">SHOW ALL</a>
+          {% else %}
+            <a href="?{% if extra_query_params %}{{ extra_query_params }}&amp;{% endif %}page=1">PAGINATE</a>
+          {% endif %}
+        </div>
+        <div class="col text-right">
+          {% if lemmas.paginator %}
+            {{ lemmas.start_index }}&ndash;{{ lemmas.end_index }}
+          of {{ lemma_count|intcomma }} lemma{{ lemma_count|pluralize }};
+          {% else %}
+            {{ lemma_count|intcomma }} lemma{{ lemma_count|pluralize }};
+          {% endif %}
+          {{ token_count|intcomma }} token{{ token_count|pluralize }}
+        </div>
+      </div>
 
       <table class="word-list table table-sm table-hover">
         <thead>
