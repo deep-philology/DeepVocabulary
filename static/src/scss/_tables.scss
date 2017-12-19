@@ -2,3 +2,9 @@
 //     @extend .table;
 //     @extend .table-bordered;
 // }
+
+.table {
+  thead tr {
+    background: $gray-400;
+  }
+}
