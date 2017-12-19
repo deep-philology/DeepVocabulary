@@ -15,14 +15,21 @@
     <div class="container">
 
       <div class="row word-list-controls">
-        <div class="col-4">
+        <div class="col">
           {% include "deep_vocabulary/_search_form.html" %}
-        </div>
-        <div class="col-3 text-center">
-          {% include "deep_vocabulary/_pagination.html" %}
         </div>
         <div class="col">
           {% include "deep_vocabulary/_frequency_filter.html" %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          {% include "deep_vocabulary/_pagination.html" %}
+        </div>
+        <div class="col text-right">
+          lemmas {{ lemmas.start_index }}&ndash;{{ lemmas.end_index }}
+          of {{ lemma_count|intcomma }}
         </div>
       </div>
 
@@ -50,6 +57,7 @@
       </table>
 
       {% include "deep_vocabulary/_pagination.html" %}
+
     </div>
   </section>
 {% endblock %}

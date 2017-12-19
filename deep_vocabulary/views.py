@@ -76,6 +76,7 @@ def lemma_list(request):
         "3": "sort_key",
     }.get(order, "-core_count"))
 
+    lemma_count = lemma_list.count()
     paginator = Paginator(lemma_list, 20)
 
     try:
@@ -87,6 +88,7 @@ def lemma_list(request):
 
     return render(request, "deep_vocabulary/lemma_list.html", {
         "lemmas": lemmas,
+        "lemma_count": lemma_count,
         "extra_query_params": extra_query_params,
     })
 
