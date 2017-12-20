@@ -87,6 +87,8 @@ def lemma_list(request):
     return render(request, "deep_vocabulary/lemma_list.html", {
         "lemmas": lemmas,
         "lemma_count": lemma_count,
+        "core_total": core_total,
+        "corpus_total": corpus_total,
     })
 
 
