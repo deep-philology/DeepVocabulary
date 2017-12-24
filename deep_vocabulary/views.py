@@ -237,6 +237,15 @@ def word_list(request, cts_urn, response_format="html"):
             maxcount = [None, 0.1, 0.2, 0.5, 1, 2, 5, 10, None][maxtick] * corpus_total / 10000
             freq_filter &= Q(lemma__corpus_count__lte=maxcount)
 
+    if ref:
+        work_lemmas = dict(
+            PassageLemma.objects.filter(
+                Q(text_edition=text_edition),
+                freq_filter,
+            ).values_list("lemma").annotate(total=Sum("count"))
+        )
+    else:
+        work_lemmas = {}
     passage_lemmas = dict(
         PassageLemma.objects.filter(
             Q(text_edition=text_edition),
@@ -260,6 +269,7 @@ def word_list(request, cts_urn, response_format="html"):
     )
     lemma_data = {item[0]: item[1:] for item in lemma_values_list}
     total = sum(passage_lemmas.values())
+    work_total = sum(work_lemmas.values())
     corpus_total, core_total = calc_overall_counts()
 
     if order == "1":  # text (by sort_key)
@@ -279,6 +289,12 @@ def word_list(request, cts_urn, response_format="html"):
         sort_reverse = False
     elif order == "-3":  # corpus count descending
         sort_key = itemgetter("corpus_frequency")
+        sort_reverse = True
+    elif ref and order == "6":  # work count ascending
+        sort_key = itemgetter("work_frequency")
+        sort_reverse = False
+    elif ref and order == "-6":  # work count descending
+        sort_key = itemgetter("work_frequency")
         sort_reverse = True
     elif order == "4":  # log ratio ascending
         sort_key = lambda x: x["ratio"] if x["ratio"] else 1  # noqa: E731
@@ -302,6 +318,8 @@ def word_list(request, cts_urn, response_format="html"):
                 "shortdef": definitions[lemma_id],
                 "count": passage_lemmas[lemma_id],
                 "frequency": round(10000 * passage_lemmas[lemma_id] / total, 1),
+                "work_count": work_lemmas[lemma_id] if ref else None,
+                "work_frequency": round(10000 * work_lemmas[lemma_id] / work_total, 2) if ref else None,
                 "corpus_frequency": round(10000 * lemma_data[lemma_id][1] / corpus_total, 3),
                 "core_frequency": round(10000 * lemma_data[lemma_id][2] / core_total, 2),
                 "ratio": (
@@ -340,6 +358,7 @@ def word_list(request, cts_urn, response_format="html"):
             "lemma_count": lemma_count,
             "token_count": token_count,
             "token_total": total,
+            "work_total": work_total,
         })
 
     if response_format == "json":
