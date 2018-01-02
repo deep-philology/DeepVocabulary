@@ -255,7 +255,7 @@ def word_list(request, cts_urn, response_format="html"):
     )
     definitions = dict(
         Definition.objects.filter(
-            source="logeion_002",
+            source="logeion_003",
             lemma__in=passage_lemmas.keys()
         ).values_list(
             "lemma_id",
