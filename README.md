@@ -27,7 +27,7 @@ In the Python shell:
 
 ```python
 from deep_vocabulary.models import *
-import_data("./data/editions_01.txt", "./data/logeion_02.txt", "./data/bag_of_words_01.txt", "logeion_002")
+import_data("./data/editions_03.txt", "./data/logeion_03.txt", "./data/bag_of_words_03.txt", "logeion_003")
 mark_core("./data/core_works_urn.txt")
 update_lemma_counts()
 update_edition_token_counts()
