@@ -65,6 +65,8 @@
                 <a href="?{% query o="-2" page="" %}"><i class="fa fa-sort-asc"></i> core count (freq.)</a>
               {% elif request.GET.o == "-2" %}
                 <a href="?{% query o="2" page="" %}"><i class="fa fa-sort-desc"></i> core count (freq.)</a>
+                {% elif not request.GET.o %}
+                  <a href="?{% query o="2" page="" %}"><i class="fa fa-sort-desc"></i> core count (freq.)</a>
               {% else %}
                 <a href="?{% query o="-2" page="" %}">core count (freq.)</a>
               {% endif %}
