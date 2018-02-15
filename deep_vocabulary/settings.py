@@ -152,6 +152,7 @@ INSTALLED_APPS = [
 
     # project
     "deep_vocabulary",
+    "deep_vocabulary.lists",
 ]
 
 ADMIN_URL = "admin:index"
