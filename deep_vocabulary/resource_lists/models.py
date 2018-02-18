@@ -71,6 +71,7 @@ class ReadingListEntry(AuditedModel, BaseListEntry):
     class Meta:
         verbose_name = "reading list entry"
         verbose_name_plural = "reading list entries"
+        order_with_respect_to = "resource_list"
 
     def __str__(self):
         return self.cts_urn
@@ -84,6 +85,7 @@ class VocabularyListEntry(AuditedModel, BaseListEntry):
     class Meta:
         verbose_name = "vocabulary list entry"
         verbose_name_plural = "vocabulary list entries"
+        order_with_respect_to = "resource_list"
 
 
 class ReadingListSubscription(AuditedModel, BaseSubscription):
