@@ -11,7 +11,8 @@ from .views import lemma_list, lemma_detail, word_list, editions_list, reader_re
 urlpatterns = [
     url(r"^$", TemplateView.as_view(template_name="homepage.html"), name="home"),
     url(r"^admin/", include(admin.site.urls)),
-    # url(r"^account/", include("account.urls")),
+    url(r"^account/", include("account.urls")),
+    url(r"^oidc/", include("mozilla_django_oidc.urls")),
 
     url(r"^lemma/$", lemma_list, name="lemma_list"),
     url(r"^lemma/(?P<pk>\d+)/$", lemma_detail, name="lemma_detail"),

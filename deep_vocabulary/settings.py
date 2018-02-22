@@ -115,7 +115,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.auth.middleware.SessionAuthenticationMiddleware",
+    "mozilla_django_oidc.middleware.RefreshIDToken",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "querycount.middleware.QueryCountMiddleware",
@@ -142,6 +142,7 @@ INSTALLED_APPS = [
 
     # external
     "account",
+    "mozilla_django_oidc",
     "pinax.eventlog",
     "pinax.webanalytics",
     "raven.contrib.django.raven_compat",
@@ -189,7 +190,7 @@ FIXTURE_DIRS = [
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-ACCOUNT_OPEN_SIGNUP = True
+ACCOUNT_OPEN_SIGNUP = False
 ACCOUNT_EMAIL_UNIQUE = True
 ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = False
 ACCOUNT_LOGIN_REDIRECT_URL = "home"
@@ -199,6 +200,7 @@ ACCOUNT_USE_AUTH_AUTHENTICATE = True
 
 AUTHENTICATION_BACKENDS = [
     "account.auth_backends.UsernameAuthenticationBackend",
+    "deep_vocabulary.auth.PinaxOIDCAuthenticationBackend",
 ]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -211,3 +213,16 @@ if "SENTRY_DSN" in os.environ:
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r"^.*/json/$"
+
+OIDC_HOST = os.environ.get("OIDC_HOST", "http://localhost:3000")
+OIDC_RP_CLIENT_ID = os.environ.get("OIDC_RP_CLIENT_ID")
+OIDC_RP_CLIENT_SECRET = os.environ.get("OIDC_RP_CLIENT_SECRET")
+OIDC_OP_AUTHORIZATION_ENDPOINT = f"{OIDC_HOST}/openid/authorize"
+OIDC_OP_TOKEN_ENDPOINT = f"{OIDC_HOST}/openid/token"
+OIDC_OP_USER_ENDPOINT = f"{OIDC_HOST}/openid/userinfo"
+OIDC_RENEW_ID_TOKEN_EXPIRY_SECONDS = 60 * 15
+
+LOGIN_REDIRECT_URL = ACCOUNT_LOGIN_REDIRECT_URL
+LOGOUT_REDIRECT_URL = ACCOUNT_LOGOUT_REDIRECT_URL
+
+USE_X_FORWARDED_HOST = True
