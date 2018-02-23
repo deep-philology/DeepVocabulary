@@ -164,24 +164,51 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "filters": {
-        "require_debug_false": {
-            "()": "django.utils.log.RequireDebugFalse"
-        }
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue",
+        },
+    },
+    "formatters": {
+        "simple": {
+            "format": "{asctime} {name:<12} {levelname:<8} {message}",
+            "style": "{",
+        },
+        "django.server": {
+            "()": "django.utils.log.ServerFormatter",
+            "format": "{asctime} {name:<12} {levelname:<8} {message}",
+            "style": "{",
+        },
     },
     "handlers": {
-        "mail_admins": {
-            "level": "ERROR",
-            "filters": ["require_debug_false"],
-            "class": "django.utils.log.AdminEmailHandler"
-        }
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+            "filters": ["require_debug_true"],
+            "level": "DEBUG",
+        },
+        "django.server": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "django.server",
+        },
     },
     "loggers": {
         "django.request": {
-            "handlers": ["mail_admins"],
-            "level": "ERROR",
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "django.server": {
+            "handlers": ["django.server"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "mozilla_django_oidc": {
+            "handlers": ["console"],
+            "level": "DEBUG",
             "propagate": True,
         },
-    }
+    },
 }
 
 FIXTURE_DIRS = [
