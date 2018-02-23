@@ -1,5 +1,7 @@
 import os
 
+from django.urls import reverse_lazy
+
 import dj_database_url
 
 
@@ -248,8 +250,12 @@ OIDC_OP_AUTHORIZATION_ENDPOINT = f"{OIDC_HOST}/openid/authorize"
 OIDC_OP_TOKEN_ENDPOINT = f"{OIDC_HOST}/openid/token"
 OIDC_OP_USER_ENDPOINT = f"{OIDC_HOST}/openid/userinfo"
 OIDC_RENEW_ID_TOKEN_EXPIRY_SECONDS = 60 * 15
+OIDC_RP_SCOPES = "openid email profile"
 
-LOGIN_REDIRECT_URL = ACCOUNT_LOGIN_REDIRECT_URL
-LOGOUT_REDIRECT_URL = ACCOUNT_LOGOUT_REDIRECT_URL
+# reverse_lazy is required because mozilla-django-oidc does not handle
+# URLconf names
+LOGIN_REDIRECT_URL = reverse_lazy(ACCOUNT_LOGIN_REDIRECT_URL)
+LOGIN_REDIRECT_URL_FAILURE = reverse_lazy("account_login_failure")
+LOGOUT_REDIRECT_URL = reverse_lazy(ACCOUNT_LOGOUT_REDIRECT_URL)
 
 USE_X_FORWARDED_HOST = True
