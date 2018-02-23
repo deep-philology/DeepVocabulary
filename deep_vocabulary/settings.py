@@ -1,5 +1,7 @@
 import os
 
+from django.urls import reverse_lazy
+
 import dj_database_url
 
 
@@ -115,7 +117,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.auth.middleware.SessionAuthenticationMiddleware",
+    "mozilla_django_oidc.middleware.RefreshIDToken",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "querycount.middleware.QueryCountMiddleware",
@@ -142,6 +144,7 @@ INSTALLED_APPS = [
 
     # external
     "account",
+    "mozilla_django_oidc",
     "pinax.eventlog",
     "pinax.webanalytics",
     "raven.contrib.django.raven_compat",
@@ -163,24 +166,51 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "filters": {
-        "require_debug_false": {
-            "()": "django.utils.log.RequireDebugFalse"
-        }
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue",
+        },
+    },
+    "formatters": {
+        "simple": {
+            "format": "{asctime} {name:<12} {levelname:<8} {message}",
+            "style": "{",
+        },
+        "django.server": {
+            "()": "django.utils.log.ServerFormatter",
+            "format": "{asctime} {name:<12} {levelname:<8} {message}",
+            "style": "{",
+        },
     },
     "handlers": {
-        "mail_admins": {
-            "level": "ERROR",
-            "filters": ["require_debug_false"],
-            "class": "django.utils.log.AdminEmailHandler"
-        }
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+            "filters": ["require_debug_true"],
+            "level": "DEBUG",
+        },
+        "django.server": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "django.server",
+        },
     },
     "loggers": {
         "django.request": {
-            "handlers": ["mail_admins"],
-            "level": "ERROR",
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "django.server": {
+            "handlers": ["django.server"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "mozilla_django_oidc": {
+            "handlers": ["console"],
+            "level": "DEBUG",
             "propagate": True,
         },
-    }
+    },
 }
 
 FIXTURE_DIRS = [
@@ -189,7 +219,7 @@ FIXTURE_DIRS = [
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-ACCOUNT_OPEN_SIGNUP = True
+ACCOUNT_OPEN_SIGNUP = False
 ACCOUNT_EMAIL_UNIQUE = True
 ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = False
 ACCOUNT_LOGIN_REDIRECT_URL = "home"
@@ -199,6 +229,7 @@ ACCOUNT_USE_AUTH_AUTHENTICATE = True
 
 AUTHENTICATION_BACKENDS = [
     "account.auth_backends.UsernameAuthenticationBackend",
+    "deep_vocabulary.auth.PinaxOIDCAuthenticationBackend",
 ]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -211,3 +242,20 @@ if "SENTRY_DSN" in os.environ:
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r"^.*/json/$"
+
+OIDC_HOST = os.environ.get("OIDC_HOST", "http://localhost:3000")
+OIDC_RP_CLIENT_ID = os.environ.get("OIDC_RP_CLIENT_ID")
+OIDC_RP_CLIENT_SECRET = os.environ.get("OIDC_RP_CLIENT_SECRET")
+OIDC_OP_AUTHORIZATION_ENDPOINT = f"{OIDC_HOST}/openid/authorize"
+OIDC_OP_TOKEN_ENDPOINT = f"{OIDC_HOST}/openid/token"
+OIDC_OP_USER_ENDPOINT = f"{OIDC_HOST}/openid/userinfo"
+OIDC_RENEW_ID_TOKEN_EXPIRY_SECONDS = 60 * 15
+OIDC_RP_SCOPES = "openid email profile"
+
+# reverse_lazy is required because mozilla-django-oidc does not handle
+# URLconf names
+LOGIN_REDIRECT_URL = reverse_lazy(ACCOUNT_LOGIN_REDIRECT_URL)
+LOGIN_REDIRECT_URL_FAILURE = reverse_lazy("account_login_failure")
+LOGOUT_REDIRECT_URL = reverse_lazy(ACCOUNT_LOGOUT_REDIRECT_URL)
+
+USE_X_FORWARDED_HOST = True
