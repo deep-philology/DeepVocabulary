@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.core.exceptions import PermissionDenied
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
@@ -9,9 +9,13 @@ class BaseListsView(ListView):
     context_object_name = "resource_lists"
 
     def get_queryset(self):
-        return super().get_queryset().filter(
-            Q(owner=self.request.user.pk) | Q(owner__isnull=True)
-        )
+        user_pk = self.kwargs.get("user_pk")
+        if user_pk:
+            if user_pk == self.request.user.pk:
+                return super().get_queryset().filter(owner=user_pk)
+            else:
+                raise PermissionDenied(self.request)
+        return super().get_queryset().filter(owner__isnull=True)
 
 
 class ReadingListsView(BaseListsView):

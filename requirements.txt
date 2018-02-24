@@ -1,5 +1,6 @@
 -r requirements-zero.txt
 -r requirements-account.txt
+-r requirements-dev.txt
 
 dj-database-url==0.4.2
 psycopg2==2.7.3.2
