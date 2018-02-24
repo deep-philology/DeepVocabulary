@@ -1,7 +1,9 @@
 import uuid
 
 from django.conf import settings
+from django.contrib.admin.utils import NestedObjects
 from django.db import models
+from django.db.models.fields.related import ForeignKey
 
 
 class AuditedModel(models.Model):
@@ -10,6 +12,58 @@ class AuditedModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+class CloneableModel(models.Model):
+    class Meta:
+        abstract = True
+
+    def _build_graph(self):
+        graph = {}
+        for key in self.related_models:
+            pks = [item.pk for item in self.collector.data[key]]
+            items = [item for item in self.collector.data[key]]
+            graph.update({
+                key: dict(zip(pks, items))
+            })
+        return graph
+
+    def duplicate(self, owner):  # noqa
+        root_obj = None
+        original_secret_key = self.secret_key
+
+        self.collector = NestedObjects(using="default")
+        self.collector.collect([self])
+        self.collector.sort()
+        self.related_models = self.collector.data.keys()
+        graph = self._build_graph()
+
+        for model in self.related_models:
+            fks = []
+            for field in model._meta.fields:
+                if isinstance(field, ForeignKey) and \
+                        field.remote_field.model in self.related_models:
+                    fks.append(field)
+
+            sub_objects = self.collector.data[model]
+            for obj in sub_objects:
+                for fk in fks:
+                    fk_value = getattr(obj, f"{fk.name}_id")
+                    fk_rel_to = graph[fk.remote_field.model]
+                    if fk_value in fk_rel_to:
+                        dupe_obj = fk_rel_to[fk_value]
+                        setattr(obj, fk.name, dupe_obj)
+
+                obj.id = None
+                obj.pk = None
+                cloned_from = self._meta.model.objects.get(
+                    secret_key=original_secret_key
+                )
+                obj.save(cloned=True, owner=owner, cloned_from=cloned_from)
+                if root_obj is None:
+                    root_obj = obj
+
+        return root_obj
 
 
 class BaseList(models.Model):
@@ -32,6 +86,13 @@ class BaseList(models.Model):
     def __str__(self):
         return f"{self.title} - {self.secret_key}"
 
+    def save(self, cloned=False, owner=None, cloned_from=None, *args, **kwargs):
+        if not self.pk and cloned:
+            self.secret_key = uuid.uuid4()
+            self.owner = owner
+            self.cloned_from = cloned_from
+        return super().save(*args, **kwargs)
+
 
 class BaseListEntry(models.Model):
     note = models.TextField(null=True, blank=True)
@@ -52,12 +113,12 @@ class BaseSubscription(models.Model):
         abstract = True
 
 
-class ReadingList(AuditedModel, BaseList):
+class ReadingList(AuditedModel, CloneableModel, BaseList):
     class Meta:
         verbose_name = "reading list"
 
 
-class VocabularyList(AuditedModel, BaseList):
+class VocabularyList(AuditedModel, CloneableModel, BaseList):
     class Meta:
         verbose_name = "vocabulary list"
 

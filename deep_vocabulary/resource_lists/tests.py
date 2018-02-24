@@ -1,27 +1,110 @@
-from django.contrib.auth.models import User
-from django.core.exceptions import PermissionDenied
+from test_plus.test import TestCase as TestCasePlus
 
-from test_plus.test import TestCase
+from deep_vocabulary import factories
+
+from . import models
 
 
-class ResourceListViewsTests(TestCase):
+class ResourceListModelTests(TestCasePlus):
     def setUp(self):
-        self.user = User.objects.create_user(
-            username="user",
-            email="email@example.com",
-            password="password"
-        )
+        self.user = factories.UserFactory.create()
 
-    def test_reading_lists_view(self):
-        self.get("all_reading_lists")
-        self.response_200()
+    def test_resource_list_clone(self):
+        reading_list = factories.ReadingListFactory.create()
+        reading_list.duplicate(owner=self.user)
 
-    def test_user_reading_lists_view(self):
+        self.assertEqual(models.ReadingList.objects.count(), 2)
+        original, clone = models.ReadingList.objects.all()
+
+        self.assertEqual(clone.owner_id, self.user.pk)
+        self.assertEqual(clone.cloned_from_id, original.pk)
+        self.assertEqual(clone.title, original.title)
+
+        altered_fields = ["secret_key", "updated", "created"]
+        for field in altered_fields:
+            with self.subTest(field=field):
+                self.assertNotEqual(
+                    getattr(original, field),
+                    getattr(clone, field)
+                )
+
+
+class ResourceListViewsTests(TestCasePlus):
+    def setUp(self):
+        self.user = factories.UserFactory.create()
         self.client.force_login(self.user)
-        self.get("user_reading_lists", user_pk=self.user.pk)
-        self.response_200()
 
-    def test_user_reading_lists_view_permission_denied(self):
-        self.client.force_login(self.user)
-        with self.assertRaises(PermissionDenied):
-            self.get("user_reading_lists", user_pk=User.objects.last().pk + 1)
+    def test_list_views(self):
+        views = ["reading_lists", "vocabulary_lists"]
+        for view in views:
+            with self.subTest(view=view):
+                self.get(view)
+                self.response_200()
+
+    def test_user_list_views(self):
+        views = ["user_reading_lists", "user_vocabulary_lists"]
+        for view in views:
+            with self.subTest(view=view):
+                self.get(view, user_pk=self.user.pk)
+                self.response_200()
+
+    def test_user_list_views_permission_denied(self):
+        views = ["user_reading_lists", "user_vocabulary_lists"]
+        for view in views:
+            with self.subTest(view=view):
+                self.get(view, user_pk=self.user.pk + 1)
+                self.response_403()
+
+    def test_user_subscriptions_views(self):
+        views = ["reading_list_subscriptions", "vocabulary_list_subscriptions"]
+        for view in views:
+            with self.subTest(view=view):
+                self.get(view, user_pk=self.user.pk)
+                self.response_200()
+
+    def test_user_subscriptions_views_permission_denied(self):
+        views = ["reading_list_subscriptions", "vocabulary_list_subscriptions"]
+        for view in views:
+            with self.subTest(view=view):
+                self.get(view, user_pk=self.user.pk + 1)
+                self.response_403()
+
+    def test_list_detail_views(self):
+        reading_list = factories.ReadingListFactory.create()
+        vocabulary_list = factories.VocabularyListFactory.create()
+        views = [
+            ("reading_list", reading_list),
+            ("vocabulary_list", vocabulary_list)
+        ]
+        for view, resource_list in views:
+            with self.subTest(view=view):
+                self.get(view, secret_key=resource_list.secret_key)
+                self.response_200()
+
+    def test_list_clone_views(self):
+        reading_list = factories.ReadingListFactory.create()
+        vocabulary_list = factories.VocabularyListFactory.create()
+        views = [
+            ("reading_list_clone", reading_list),
+            ("vocabulary_list_clone", vocabulary_list)
+        ]
+        for view, resource_list in views:
+            with self.subTest(view=view):
+                self.assertEqual(resource_list._meta.model.objects.count(), 1)
+                self.get(view, secret_key=resource_list.secret_key)
+                self.response_200()
+                self.assertEqual(resource_list._meta.model.objects.count(), 2)
+
+    def test_list_subscribe_views(self):
+        reading_list = factories.ReadingListFactory.create()
+        vocabulary_list = factories.VocabularyListFactory.create()
+        views = [
+            ("reading_list_subscribe", reading_list),
+            ("vocabulary_list_subscribe", vocabulary_list)
+        ]
+        for view, resource_list in views:
+            with self.subTest(view=view):
+                self.assertEqual(resource_list.subscriptions.count(), 0)
+                self.get(view, secret_key=resource_list.secret_key)
+                self.response_200()
+                self.assertEqual(resource_list.subscriptions.count(), 1)
