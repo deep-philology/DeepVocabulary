@@ -72,7 +72,7 @@ STATICFILES_DIRS = [
     os.path.join(PROJECT_ROOT, "static", "dist"),
 ]
 
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
+# STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
 
 # List of finder classes that know how to find static files in
 # various locations.

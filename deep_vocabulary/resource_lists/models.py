@@ -2,8 +2,9 @@ import uuid
 
 from django.conf import settings
 from django.contrib.admin.utils import NestedObjects
-from django.db import models
+from django.db import models, IntegrityError
 from django.db.models.fields.related import ForeignKey
+from django.urls import reverse
 
 
 class AuditedModel(models.Model):
@@ -59,9 +60,11 @@ class CloneableModel(models.Model):
                 cloned_from = self._meta.model.objects.get(
                     secret_key=original_secret_key
                 )
-                obj.save(cloned=True, owner=owner, cloned_from=cloned_from)
                 if root_obj is None:
                     root_obj = obj
+                    root_obj.save(owner, cloned_from, cloned=True)
+                else:
+                    obj.save()
 
         return root_obj
 
@@ -86,12 +89,12 @@ class BaseList(models.Model):
     def __str__(self):
         return f"{self.title} - {self.secret_key}"
 
-    def save(self, cloned=False, owner=None, cloned_from=None, *args, **kwargs):
-        if not self.pk and cloned:
-            self.secret_key = uuid.uuid4()
+    def save(self, owner=None, cloned_from=None, cloned=False, *args, **kwargs):
+        if cloned:
             self.owner = owner
             self.cloned_from = cloned_from
-        return super().save(*args, **kwargs)
+            self.secret_key = uuid.uuid4()
+        super().save(*args, **kwargs)
 
 
 class BaseListEntry(models.Model):
@@ -112,15 +115,30 @@ class BaseSubscription(models.Model):
     class Meta:
         abstract = True
 
+    def save(self, *args, **kwargs):
+        if self._meta.model.objects.filter(
+            resource_list=self.resource_list,
+            subscriber=self.subscriber
+        ).exists():
+            raise IntegrityError("Duplicate subscription.")
+        else:
+            super().save(*args, **kwargs)
+
 
 class ReadingList(AuditedModel, CloneableModel, BaseList):
     class Meta:
         verbose_name = "reading list"
 
+    def get_absolute_url(self):
+        return reverse("reading_list", kwargs={"secret_key": self.secret_key})
+
 
 class VocabularyList(AuditedModel, CloneableModel, BaseList):
     class Meta:
         verbose_name = "vocabulary list"
+
+    def get_absolute_url(self):
+        return reverse("reading_list", kwargs={"secret_key": self.secret_key})
 
 
 class ReadingListEntry(AuditedModel, BaseListEntry):

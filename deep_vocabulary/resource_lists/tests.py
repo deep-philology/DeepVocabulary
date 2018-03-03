@@ -1,3 +1,5 @@
+from django.db import IntegrityError
+
 from test_plus.test import TestCase as TestCasePlus
 
 from deep_vocabulary import factories
@@ -27,6 +29,18 @@ class ResourceListModelTests(TestCasePlus):
                     getattr(original, field),
                     getattr(clone, field)
                 )
+
+    def test_subscription_save_constraint(self):
+        def add_subscription():
+            models.ReadingListSubscription.objects.create(
+                resource_list=reading_list,
+                subscriber=self.user
+            )
+        reading_list = factories.ReadingListFactory.create()
+        add_subscription()
+        self.assertEqual(reading_list.subscriptions.count(), 1)
+        with self.assertRaises(IntegrityError):
+            add_subscription()
 
 
 class ResourceListViewsTests(TestCasePlus):
@@ -92,7 +106,7 @@ class ResourceListViewsTests(TestCasePlus):
             with self.subTest(view=view):
                 self.assertEqual(resource_list._meta.model.objects.count(), 1)
                 self.get(view, secret_key=resource_list.secret_key)
-                self.response_200()
+                self.response_302()
                 self.assertEqual(resource_list._meta.model.objects.count(), 2)
 
     def test_list_subscribe_views(self):
@@ -106,5 +120,5 @@ class ResourceListViewsTests(TestCasePlus):
             with self.subTest(view=view):
                 self.assertEqual(resource_list.subscriptions.count(), 0)
                 self.get(view, secret_key=resource_list.secret_key)
-                self.response_200()
+                self.response_302()
                 self.assertEqual(resource_list.subscriptions.count(), 1)
