@@ -211,3 +211,24 @@ input[type="radio"]:checked + label span {
     }
   }
 }
+
+.list-action-button {
+  margin-right: 0.5em;
+  button {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    > * {
+      margin: 0;
+    }
+    > i {
+      margin-right: 0.5em;
+    }
+    > .subscription-count {
+      border-left: 1px solid white;
+      margin-left: 0.5em;
+      padding-left: 0.5em;
+    }
+  }
+}
+

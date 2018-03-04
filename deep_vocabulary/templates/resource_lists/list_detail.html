@@ -1,0 +1,29 @@
+{% extends "site_base.html" %}
+
+{% block head_title %}Reading List{% endblock %}
+
+{% block body_base %}
+  <section class="hero">
+    <div class="container">
+      {% with owner=resource_list.owner %}
+        <h1>{{ resource_list.title }} {% if owner %}({{ owner }}){% endif %}</h1>
+      {% endwith %}
+    </div>
+  </section>
+
+  <section class="resource-list">
+    {% block messages %}{% include "_messages.html" %}{% endblock %}
+    <div class="container">
+      {% if not request.user.is_anonymous %}
+        {% include "resource_lists/includes/_list_actions.html" %}
+      {% endif %}
+
+      {% if is_reading_list %}
+        {% include "resource_lists/includes/_reading_list_detail.html" %}
+      {% elif is_vocabulary_list %}
+        {% include "resource_lists/includes/_vocabulary_list_detail.html" %}
+      {% endif %}
+    </div>
+  </section>
+
+{% endblock %}

@@ -1,8 +1,10 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import resolve
+from django.utils.decorators import method_decorator
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views import View
@@ -76,22 +78,49 @@ class ResourceListBase:
 class BaseListDetailView(ResourceListBase, DetailView):
     context_object_name = "resource_list"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context.update({
+            "count": self.object.subscriptions.count(),
+            "user_is_subscribed": self.object.subscriptions.filter(
+                subscriber=self.request.user
+            ).exists()
+        })
+        return context
+
 
 class ReadingListDetailView(BaseListDetailView):
     model = models.ReadingList
-    template_name = "resource_lists/reading_list.html"
+    template_name = "resource_lists/list_detail.html"
+
+    def partition_queryset(self):
+        partitioned = {}
+        for entry in self.object.entries.all():
+            text_edition = entry.text_edition
+            if text_edition not in partitioned:
+                partitioned[text_edition] = []
+            partitioned[text_edition].append(entry)
+        return partitioned
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context["is_reading_list"] = True
+        context["partitioned"] = self.partition_queryset()
+        return context
 
 
 class VocabularyListDetailView(BaseListDetailView):
     model = models.VocabularyList
-    template_name = "resource_lists/vocabulary_list.html"
+    template_name = "resource_lists/list_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context["is_vocabulary_list"] = True
+        return context
 
 
+@method_decorator(login_required, name="dispatch")
 class BaseListCloneView(ResourceListBase, View):
-    def dispatch(self, request, *args, **kwargs):
-        request.method = "POST"
-        return super().dispatch(request, *args, **kwargs)
-
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         clone = self.object.duplicate(owner=self.request.user)
@@ -108,11 +137,8 @@ class VocabularyListCloneView(BaseListCloneView):
     model = models.VocabularyList
 
 
+@method_decorator(login_required, name="dispatch")
 class BaseListSubscribeView(ResourceListBase, View):
-    def dispatch(self, request, *args, **kwargs):
-        request.method = "POST"
-        return super().dispatch(request, *args, **kwargs)
-
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         current_url = resolve(request.path_info).url_name

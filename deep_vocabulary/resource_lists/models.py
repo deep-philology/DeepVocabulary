@@ -3,8 +3,10 @@ import uuid
 from django.conf import settings
 from django.contrib.admin.utils import NestedObjects
 from django.db import models, IntegrityError
-from django.db.models.fields.related import ForeignKey
 from django.urls import reverse
+from django.utils.functional import cached_property
+
+from deep_vocabulary.models import TextEdition
 
 
 class AuditedModel(models.Model):
@@ -30,41 +32,26 @@ class CloneableModel(models.Model):
         return graph
 
     def duplicate(self, owner):  # noqa
-        root_obj = None
-        original_secret_key = self.secret_key
-
+        root_obj = self._meta.model.objects.create(
+            owner=owner,
+            title=self.title,
+            description=self.description,
+            secret_key=uuid.uuid4(),
+            cloned_from=self
+        )
         self.collector = NestedObjects(using="default")
         self.collector.collect([self])
         self.collector.sort()
         self.related_models = self.collector.data.keys()
         graph = self._build_graph()
 
-        for model in self.related_models:
-            fks = []
-            for field in model._meta.fields:
-                if isinstance(field, ForeignKey) and \
-                        field.remote_field.model in self.related_models:
-                    fks.append(field)
-
-            sub_objects = self.collector.data[model]
-            for obj in sub_objects:
-                for fk in fks:
-                    fk_value = getattr(obj, f"{fk.name}_id")
-                    fk_rel_to = graph[fk.remote_field.model]
-                    if fk_value in fk_rel_to:
-                        dupe_obj = fk_rel_to[fk_value]
-                        setattr(obj, fk.name, dupe_obj)
-
-                obj.id = None
-                obj.pk = None
-                cloned_from = self._meta.model.objects.get(
-                    secret_key=original_secret_key
-                )
-                if root_obj is None:
-                    root_obj = obj
-                    root_obj.save(owner, cloned_from, cloned=True)
-                else:
+        for cls, instances in graph.items():
+            if issubclass(cls, BaseListEntry):
+                for _, obj in instances.items():
+                    obj.id = None
+                    obj.pk = None
                     obj.save()
+                    root_obj.entries.add(obj)
 
         return root_obj
 
@@ -88,13 +75,6 @@ class BaseList(models.Model):
 
     def __str__(self):
         return f"{self.title} - {self.secret_key}"
-
-    def save(self, owner=None, cloned_from=None, cloned=False, *args, **kwargs):
-        if cloned:
-            self.owner = owner
-            self.cloned_from = cloned_from
-            self.secret_key = uuid.uuid4()
-        super().save(*args, **kwargs)
 
 
 class BaseListEntry(models.Model):
@@ -154,6 +134,14 @@ class ReadingListEntry(AuditedModel, BaseListEntry):
 
     def __str__(self):
         return self.cts_urn
+
+    @cached_property
+    def text_edition(self):
+        try:
+            return TextEdition.objects.get(cts_urn=self.cts_urn)
+        except TextEdition.DoesNotExist:
+            cts_urn = ":".join(self.cts_urn.split(":")[:-1])
+            return TextEdition.objects.get(cts_urn=cts_urn)
 
 
 class VocabularyListEntry(AuditedModel, BaseListEntry):
