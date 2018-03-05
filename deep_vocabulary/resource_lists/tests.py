@@ -105,7 +105,7 @@ class ResourceListViewsTests(TestCasePlus):
         for view, resource_list in views:
             with self.subTest(view=view):
                 self.assertEqual(resource_list._meta.model.objects.count(), 1)
-                self.get(view, secret_key=resource_list.secret_key)
+                self.post(view, secret_key=resource_list.secret_key)
                 self.response_302()
                 self.assertEqual(resource_list._meta.model.objects.count(), 2)
 
@@ -119,6 +119,6 @@ class ResourceListViewsTests(TestCasePlus):
         for view, resource_list in views:
             with self.subTest(view=view):
                 self.assertEqual(resource_list.subscriptions.count(), 0)
-                self.get(view, secret_key=resource_list.secret_key)
+                self.post(view, secret_key=resource_list.secret_key)
                 self.response_302()
                 self.assertEqual(resource_list.subscriptions.count(), 1)
