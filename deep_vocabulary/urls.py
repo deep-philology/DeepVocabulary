@@ -9,6 +9,7 @@ from django.contrib import admin
 from .views import (
     editions_list,
     lemma_detail,
+    lemma_json,
     lemma_list,
     reader_redirect,
     word_list,
@@ -25,6 +26,7 @@ urlpatterns = [
 
     url(r"^lemma/$", lemma_list, name="lemma_list"),
     url(r"^lemma/(?P<pk>\d+)/$", lemma_detail, name="lemma_detail"),
+    url(r"^lemma/json/", lemma_json, name="lemma_json"),
 
     url(r"^editions/$", editions_list, name="editions_list"),
     url(r"^word-list/(?P<cts_urn>[^/]+)/$", word_list, name="word_list"),
