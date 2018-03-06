@@ -412,7 +412,7 @@ def lemma_json(request):
 
 
 def reader_redirect(request, cts_urn):
-    SCAIFE_HOST = "https://lk353.eu1.eldarioncloud.com"
+    SCAIFE_HOST = "https://scaife.eldarion.com"
     if len(cts_urn.split(":")) == 4:
         return redirect(f"{SCAIFE_HOST}/library/{cts_urn}/")
     elif len(cts_urn.split(":")) == 5:
