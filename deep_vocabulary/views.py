@@ -397,6 +397,20 @@ def word_list(request, cts_urn, response_format="html"):
         return response
 
 
+def lemma_json(request):
+    lemmas = request.GET.getlist("l")
+    data = {
+        "lemmas": [{
+            "text": lemma.text,
+            "shortdef": getattr(lemma.definitions.first(), "shortdef"),
+        } for lemma in Lemma.objects.filter(
+            text__in=lemmas
+        ).order_by("sort_key")]
+    }
+    response = JsonResponse(data)
+    return response
+
+
 def reader_redirect(request, cts_urn):
     SCAIFE_HOST = "https://lk353.eu1.eldarioncloud.com"
     if len(cts_urn.split(":")) == 4:
