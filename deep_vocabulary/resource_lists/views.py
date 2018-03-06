@@ -6,10 +6,17 @@ from django.shortcuts import get_object_or_404
 from django.urls import resolve
 from django.utils.decorators import method_decorator
 from django.views.generic.detail import DetailView
+from django.views.generic.edit import DeleteView
 from django.views.generic.list import ListView
 from django.views import View
 
-from . import models
+from extra_views import (
+    InlineFormSet,
+    CreateWithInlinesView,
+    UpdateWithInlinesView
+)
+
+from . import forms, models
 
 
 class BaseListsView(ListView):
@@ -66,20 +73,22 @@ class ResourceListBase:
 
     def get_object(self):
         try:
-            return get_object_or_404(
+            self.object = get_object_or_404(
                 self.model, secret_key=self.kwargs[self.pk_url_kwarg]
             )
         except ValidationError:
             # Also capture the exception thrown by UUIDField for any strings
             # that are not valid uuid's.
             raise Http404()
+        return self.object
 
 
 class BaseListDetailView(ResourceListBase, DetailView):
     context_object_name = "resource_list"
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data()
+        self.get_object()
+        context = super().get_context_data(**kwargs)
         context.update({
             "count": self.object.subscriptions.count(),
             "user_is_subscribed": self.object.subscriptions.filter(
@@ -103,7 +112,7 @@ class ReadingListDetailView(BaseListDetailView):
         return partitioned
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data()
+        context = super().get_context_data(**kwargs)
         context["is_reading_list"] = True
         context["partitioned"] = self.partition_queryset()
         return context
@@ -114,7 +123,7 @@ class VocabularyListDetailView(BaseListDetailView):
     template_name = "resource_lists/list_detail.html"
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data()
+        context = super().get_context_data(**kwargs)
         context["is_vocabulary_list"] = True
         return context
 
@@ -122,7 +131,7 @@ class VocabularyListDetailView(BaseListDetailView):
 @method_decorator(login_required, name="dispatch")
 class BaseListCloneView(ResourceListBase, View):
     def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
+        self.get_object()
         clone = self.object.duplicate(owner=self.request.user)
         success_message = f"List cloned with secret key: {clone.secret_key}."
         messages.success(self.request, success_message)
@@ -140,7 +149,7 @@ class VocabularyListCloneView(BaseListCloneView):
 @method_decorator(login_required, name="dispatch")
 class BaseListSubscribeView(ResourceListBase, View):
     def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
+        self.get_object()
         current_url = resolve(request.path_info).url_name
         if current_url.endswith("list_subscribe"):
             return self.subscribe(request, *args, **kwargs)
@@ -187,3 +196,96 @@ class ReadingListSubscribeView(BaseListSubscribeView):
 class VocabularyListSubscribeView(BaseListSubscribeView):
     model = models.VocabularyList
     subscription_model = models.VocabularyListSubscription
+
+
+class ResourceListCrud:
+    template_name = "resource_lists/list_edit.html"
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs.update({"owner": self.request.user})
+        return form_kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.model._meta.label == "resource_lists.ReadingList":
+            context.update({"is_reading_list": True})
+        return context
+
+
+class BaseListCreateView(ResourceListCrud, CreateWithInlinesView):
+    pass
+
+
+class BaseListUpdateView(ResourceListBase, ResourceListCrud, UpdateWithInlinesView):
+    def get_object(self):
+        super().get_object()
+        if self.object.owner and self.object.owner != self.request.user:
+            raise PermissionDenied(self.request)
+        return self.object
+
+    def get_context_data(self, **kwargs):
+        self.get_object()
+        context = super().get_context_data(**kwargs)
+        context.update({"update": True})
+        return context
+
+
+class BaseListDeleteView(ResourceListBase, DeleteView):
+    def get_object(self):
+        super().get_object()
+        if self.object.owner and self.object.owner != self.request.user:
+            raise PermissionDenied(self.request)
+
+
+class ReadingListEntryInline(InlineFormSet):
+    model = models.ReadingListEntry
+    fields = ["cts_urn", "note"]
+    can_delete = True
+    extra = 1
+
+
+class VocabularyListEntryInline(InlineFormSet):
+    model = models.VocabularyListEntry
+    fields = ["cts_urn", "note"]
+    can_delete = True
+    extra = 1
+
+
+class ReadingListCreateView(BaseListCreateView):
+    model = models.ReadingList
+    form_class = forms.ReadingListForm
+    inlines = [ReadingListEntryInline]
+
+
+class ReadingListUpdateView(BaseListUpdateView):
+    model = models.ReadingList
+    form_class = forms.ReadingListForm
+    inlines = [ReadingListEntryInline]
+
+    def construct_inlines(self):
+        inlines = super().construct_inlines()
+        return inlines
+
+
+class ReadingListDeleteView(BaseListDeleteView):
+    model = models.ReadingList
+
+
+class VocabularyListCreateView(BaseListCreateView):
+    model = models.VocabularyList
+    form_class = forms.VocabularyListForm
+    inlines = [VocabularyListEntryInline]
+
+
+class VocabularyListUpdateView(BaseListUpdateView):
+    model = models.VocabularyList
+    form_class = forms.VocabularyListForm
+    inlines = [VocabularyListEntryInline]
+
+
+class VocabularyListDeleteView(BaseListDeleteView):
+    model = models.VocabularyList

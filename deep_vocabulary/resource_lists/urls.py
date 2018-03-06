@@ -12,6 +12,12 @@ urlpatterns = [
 
     url(r"^reading/(?P<secret_key>[0-9a-f-]+)/$",
         views.ReadingListDetailView.as_view(), name="reading_list"),
+    url(r"^reading/create/$",
+        views.ReadingListCreateView.as_view(), name="reading_list_create"),
+    url(r"^reading/update/(?P<secret_key>[0-9a-f-]+)/$",
+        views.ReadingListUpdateView.as_view(), name="reading_list_update"),
+    url(r"^reading/delete/(?P<secret_key>[0-9a-f-]+)/$",
+        views.ReadingListDeleteView.as_view(), name="reading_list_delete"),
 
     url(r"^reading/clone/(?P<secret_key>[0-9a-f-]+)/$",
         views.ReadingListCloneView.as_view(), name="reading_list_clone"),
