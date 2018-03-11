@@ -75,6 +75,9 @@ def lemma_list(request):
     }.get(order, "-core_count"))
 
     lemma_count = lemma_list.count()
+
+    lemma_list = lemma_list.prefetch_related("definitions")
+
     paginator = Paginator(lemma_list, 20)
 
     try:
