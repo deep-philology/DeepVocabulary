@@ -13,6 +13,9 @@ from .querysets import Q_by_ref
 from .utils import encode_link_header, strip_accents
 
 
+DEFAULT_PAGE_SIZE = 20
+
+
 def lemma_list(request):
 
     query = request.GET.get("q")
@@ -20,6 +23,15 @@ def lemma_list(request):
     scope = request.GET.get("scope")
     freqrange = request.GET.get("freqrange")
     page = request.GET.get("page")
+    page_size = request.GET.get("size")
+
+    if page_size:
+        try:
+            page_size = int(page_size)
+        except ValuError:
+            page_size = DEFAULT_PAGE_SIZE
+    else:
+        page_size = DEFAULT_PAGE_SIZE
 
     if freqrange:
         try:
@@ -75,7 +87,7 @@ def lemma_list(request):
     }.get(order, "-core_count"))
 
     lemma_count = lemma_list.count()
-    paginator = Paginator(lemma_list, 20)
+    paginator = Paginator(lemma_list, page_size)
 
     try:
         lemmas = paginator.page(page)
