@@ -48,6 +48,13 @@
         {% endwith %}
 
       {% endfor %}
+
+      <div class="resource-list buttons">
+        <button class="btn btn-primary" type="button">
+          <a href="{% url 'reading_list_create' %}">Create</a>
+        </button>
+      </div>
+
     </div>
   </section>
 {% endblock %}

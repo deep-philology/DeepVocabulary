@@ -19,7 +19,7 @@
   </section>
 
   <section>
-    <div class="container">
+    <div class="resource-lists edit content u-flex-parent">
       {% if form.non_field_errors %}
         <div class="form-non-field-errors alert fade in alert-danger">
           <button type="button" class="close" data-dismiss="alert">×</button>
@@ -42,7 +42,7 @@
 
       {% include "resource_lists/includes/_nav.html" %}
 
-      <form id="event-formset" class="options" action="" method="post">{% csrf_token %}
+      <form id="formset" class="resource-list-form" action="" method="post">{% csrf_token %}
         {% for hidden in form.hidden_fields %}
           {{ hidden }}
         {% endfor %}
