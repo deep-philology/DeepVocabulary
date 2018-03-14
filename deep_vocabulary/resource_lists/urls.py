@@ -3,7 +3,6 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    # url(r"", views.ResourceListsView.as_view(), name="resource_lists"),
     url(r"^reading/$", views.ReadingListsView.as_view(), name="reading_lists"),
     url(r"^reading/owner/(?P<user_pk>\d+)/$",
         views.ReadingListsView.as_view(), name="user_reading_lists"),

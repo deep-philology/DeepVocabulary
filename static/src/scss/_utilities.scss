@@ -1,0 +1,10 @@
+.u-flex-parent {
+  display: flex;
+  > * {
+    width: 100%;
+  }
+}
+
+.u-flex-vertical {
+  flex-direction: column;
+}

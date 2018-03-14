@@ -1,9 +1,15 @@
 {% extends "site_base.html" %}
 
-{% block head_title %}Reading List{% endblock %}
+{% block head_title %}
+  {% if is_reading_list %}
+    Reading List
+  {% else %}
+    Vocabulary List
+  {% endif %}
+{% endblock %}
 
 {% block body_base %}
-  <section class="hero">
+  <section class="resource-lists hero">
     <div class="container">
       {% with owner=resource_list.owner %}
         <h1>{{ resource_list.title }} {% if owner %}({{ owner }}){% endif %}</h1>
@@ -11,8 +17,10 @@
     </div>
   </section>
 
-  <section class="resource-list">
+  <section class="resource-lists content u-flex-parent">
     {% block messages %}{% include "_messages.html" %}{% endblock %}
+    {% include "resource_lists/includes/_nav.html" %}
+
     <div class="container">
       {% if not request.user.is_anonymous %}
         {% include "resource_lists/includes/_list_actions.html" %}

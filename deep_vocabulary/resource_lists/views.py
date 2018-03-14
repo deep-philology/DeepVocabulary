@@ -50,6 +50,7 @@ class VocabularyListsView(BaseListsView):
 
 class BaseSubscriptionsListsView(ListView):
     context_object_name = "subscriptions"
+    template_name = "resource_lists/list_subscriptions.html"
 
     def get_queryset(self):
         user_pk = int(self.kwargs["user_pk"])
@@ -60,12 +61,15 @@ class BaseSubscriptionsListsView(ListView):
 
 class ReadingListsSubscriptionsView(BaseSubscriptionsListsView):
     model = models.ReadingListSubscription
-    template_name = "resource_lists/reading_list_subscriptions.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({"reading_list_subscriptions": True})
+        return context
 
 
 class VocabularyListsSubscriptionsView(BaseSubscriptionsListsView):
     model = models.VocabularyListSubscription
-    template_name = "resource_lists/vocabulary_list_subscriptions.html"
 
 
 class ResourceListBase:
@@ -89,11 +93,16 @@ class BaseListDetailView(ResourceListBase, DetailView):
     def get_context_data(self, **kwargs):
         self.get_object()
         context = super().get_context_data(**kwargs)
-        context.update({
-            "count": self.object.subscriptions.count(),
-            "user_is_subscribed": self.object.subscriptions.filter(
+        try:
+            subscribed = self.object.subscriptions.filter(
                 subscriber=self.request.user
             ).exists()
+        except TypeError:
+            subscribed = False
+
+        context.update({
+            "count": self.object.subscriptions.count(),
+            "user_is_subscribed": subscribed
         })
         return context
 

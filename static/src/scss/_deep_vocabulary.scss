@@ -87,6 +87,7 @@ section.hero {
     }
   }
 }
+
 section.main {
   padding: 1em 0;
 }
@@ -232,3 +233,14 @@ input[type="radio"]:checked + label span {
   }
 }
 
+section.resource-lists.content {
+}
+
+nav.resource-lists {
+  border-right: 1px solid #ddd;
+  margin: 0 1em;
+  width: 15%;
+  > * {
+    padding: 1em 1em 0 1em;
+  }
+}

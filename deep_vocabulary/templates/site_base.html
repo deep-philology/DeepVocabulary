@@ -42,8 +42,15 @@
                 {% block nav %}
                     <ul class="navbar-nav mr-auto">
                         {% block nav_items %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'lemma_list' %}">Lemma List</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'editions_list' %}">Editions List</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'lemma_list' %}">Lemma List</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'editions_list' %}">Editions List</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'reading_lists' %}">Resource Lists</a>
+                        </li>
                         {% endblock %}
                     </ul>
                 {% endblock %}

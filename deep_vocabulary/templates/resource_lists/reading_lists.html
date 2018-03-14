@@ -3,15 +3,15 @@
 {% block head_title %}Reading Lists{% endblock %}
 
 {% block body_base %}
-  <section class="hero">
+  <section class="resource-lists hero">
     <div class="container">
       <h1>Reading Lists</h1>
     </div>
   </section>
 
-  <section>
+  <section class="resource-lists content u-flex-parent">
+    {% include "resource_lists/includes/_nav.html" %}
     <div class="container">
-
       {% if all_lists %}
         <p>
           Show: <b>Public Reading Lists </b>
@@ -26,24 +26,26 @@
       {% endif %}
 
       {% for resource_list in resource_lists %}
-        <div class="text-group">
-          <h4>
-            <a href="{% url 'reading_list' resource_list.secret_key %}">
-              {{ resource_list.title }}
-            </a>
-          </h4>
-
-          <div class="row">
-            <div class="col">
-              <h5><tt>{{ resource_list.secret_key }}</tt></h5>
-            </div>
-            <div class="col-md-2">
-              <a href="{% url 'reading_list' resource_list.secret_key %}" target="_blank">
-                browse <i class="fa fa-external-link"></i>
+        {% with secret_key=resource_list.secret_key %}
+          <div class="text-group">
+            <h4>
+              <a href="{% url 'reading_list' secret_key %}">
+                {{ resource_list.title }}
               </a>
+            </h4>
+
+            <div class="row">
+              <div class="col">
+                <h5><tt>{{ secret_key }}</tt></h5>
+              </div>
+              <div class="col-md-2">
+                <a href="{% url 'reading_list' secret_key %}" target="_blank">
+                  browse <i class="fa fa-external-link"></i>
+                </a>
+              </div>
             </div>
           </div>
-        </div>
+        {% endwith %}
 
       {% endfor %}
     </div>

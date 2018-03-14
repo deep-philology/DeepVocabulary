@@ -1,0 +1,15 @@
+<nav class="resource-lists u-flex-parent u-flex-vertical">
+  <div>
+    <a href="{% url 'reading_lists' %}">Reading Lists</a>
+  </div>
+  <div>
+    <a href="{% url 'vocabulary_lists' %}">Vocabulary Lists</a>
+  </div>
+  {% if not request.user.is_anonymous %}
+    <div>
+      <a href="{% url 'reading_list_subscriptions' self.request.user.pk %}">
+        List Subscriptions
+      </a>
+    </div>
+  {% endif %}
+</nav>

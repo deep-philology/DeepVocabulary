@@ -40,6 +40,8 @@
         {% endif %}
       {% endfor %}
 
+      {% include "resource_lists/includes/_nav.html" %}
+
       <form id="event-formset" class="options" action="" method="post">{% csrf_token %}
         {% for hidden in form.hidden_fields %}
           {{ hidden }}
@@ -54,31 +56,7 @@
             {% include "_empty_form.html" %}
             {{ formset.management_form }}
             {% for subform in formset.forms %}
-                {{ subform|bootstrap }}
-
-              {% comment %}
-              {% if forloop.first %}
-                <thead>
-                  <tr>
-                    {% for field in subform.visible_fields %}
-                      <th>{{ field|bootstrap }}</th>
-                    {% endfor %}
-                  </tr>
-                </thead>
-              {% endif %}
-              <tr>
-                {% for hidden in subform.hidden_fields %}
-                  {{ hidden }}
-                {% endfor %}
-                {% for field in subform.visible_fields %}
-                  <td class="has-content">
-                    <span class="formset-field">{{  field|bootstrap }}</span>
-                    <span class="formset-error">{{ field.errors.as_ul }}</span>
-                  </td>
-                {% endfor %}
-              </tr>
-              {% endcomment %}
-
+              {{ subform|bootstrap }}
             {% endfor %}
           {% endfor %}
         </table>
