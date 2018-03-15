@@ -1,0 +1,19 @@
+{% extends "site_base.html" %}
+
+{% block body_base %}
+
+  <section class="resource-lists hero">
+    <div class="container">
+      {% block hero %}{% endblock %}
+    </div>
+  </section>
+
+  <section class="resource-lists content u-flex-parent">
+    {% block messages %}{% include "_messages.html" %}{% endblock %}
+    {% include "resource_lists/includes/_nav.html" %}
+    <div class="resource-lists body container">
+      {% block resource_lists_body %}{% endblock %}
+    </div>
+  </section>
+
+{% endblock %}

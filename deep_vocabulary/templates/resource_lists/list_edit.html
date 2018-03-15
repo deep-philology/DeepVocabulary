@@ -1,80 +1,72 @@
-{% extends "site_base.html" %}
+{% extends "resource_lists/base.html" %}
 {% load bootstrap %}
 
-{% block body_base %}
-  <section class="hero">
-    <div class="container">
-      {% if update %}
-        {% with owner=object.owner %}
-          <h1>{{ object.title }} {% if owner %}({{ owner }}){% endif %}</h1>
-        {% endwith %}
-      {% else %}
-        {% if is_reading_list %}
-          <h1>Create New Reading List</h1>
-        {% else %}
-          <h1>Create New Vocabulary List</h1>
-        {% endif %}
-      {% endif %}
+{% block hero %}
+  {% if update %}
+    {% with owner=object.owner %}
+      <h1>{{ object.title }} {% if owner %}({{ owner }}){% endif %}</h1>
+    {% endwith %}
+  {% else %}
+    {% if is_reading_list %}
+      <h1>Create New Reading List</h1>
+    {% else %}
+      <h1>Create New Vocabulary List</h1>
+    {% endif %}
+  {% endif %}
+{% endblock %}
+
+{% block resource_lists_body %}
+  {% if form.non_field_errors %}
+    <div class="form-non-field-errors alert fade in alert-danger">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      {{ form.non_field_errors }}
     </div>
-  </section>
+  {% endif %}
 
-  <section>
-    <div class="resource-lists edit content u-flex-parent">
-      {% if form.non_field_errors %}
-        <div class="form-non-field-errors alert fade in alert-danger">
-          <button type="button" class="close" data-dismiss="alert">×</button>
-          {{ form.non_field_errors }}
-        </div>
-      {% endif %}
-
-      {% for formset in inlines %}
-        {% if formset.errors %}
-          {% for form in formset.forms %}
-            {% if form.non_field_errors %}
-              <div class="formset-errors alert fade in alert-danger">
-                <button type="button" class="close" data-dismiss="alert">×</button>
-                {{ form.non_field_errors }}
-              </div>
-            {% endif %}
-          {% endfor %}
+  {% for formset in inlines %}
+    {% if formset.errors %}
+      {% for form in formset.forms %}
+        {% if form.non_field_errors %}
+          <div class="formset-errors alert fade in alert-danger">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            {{ form.non_field_errors }}
+          </div>
         {% endif %}
       {% endfor %}
+    {% endif %}
+  {% endfor %}
 
-      {% include "resource_lists/includes/_nav.html" %}
+  <form id="formset" class="resource-list-form" action="" method="post">{% csrf_token %}
+    {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+    {% endfor %}
+    {% for field in form.visible_fields %}
+      <div class="field-container">{{ field|bootstrap }}</div>
+    {% endfor %}
 
-      <form id="formset" class="resource-list-form" action="" method="post">{% csrf_token %}
-        {% for hidden in form.hidden_fields %}
-          {{ hidden }}
+    <h4>Entries</h4>
+    <table>
+      {% for formset in inlines %}
+        {% include "_empty_form.html" %}
+        {{ formset.management_form }}
+        {% for subform in formset.forms %}
+          {{ subform|bootstrap }}
         {% endfor %}
-        {% for field in form.visible_fields %}
-          <div class="field-container">{{ field|bootstrap }}</div>
-        {% endfor %}
+      {% endfor %}
+    </table>
 
-        <h4>Entries</h4>
-        <table>
-          {% for formset in inlines %}
-            {% include "_empty_form.html" %}
-            {{ formset.management_form }}
-            {% for subform in formset.forms %}
-              {{ subform|bootstrap }}
-            {% endfor %}
-          {% endfor %}
-        </table>
-
-        <div class="form-actions">
-          {% if is_reading_list %}
-            <a href="{% url 'reading_lists' %}" class="btn btn-secondary cancel-button">
-              Cancel
-            </a>
-          {% else %}
-            <a href="{% url 'vocabulary_lists' %}" class="btn btn-secondary cancel-button">
-              Cancel
-            </a>
-          {% endif %}
-          <button class="btn btn-primary">Save</button>
-        </div>
-
-      </form>
+    <div class="form-actions">
+      {% if is_reading_list %}
+        <a href="{% url 'reading_lists' %}" class="btn btn-secondary cancel-button">
+          Cancel
+        </a>
+      {% else %}
+        <a href="{% url 'vocabulary_lists' %}" class="btn btn-secondary cancel-button">
+          Cancel
+        </a>
+      {% endif %}
+      <button class="btn btn-primary">Save</button>
     </div>
-  </section>
+
+  </form>
 {% endblock %}

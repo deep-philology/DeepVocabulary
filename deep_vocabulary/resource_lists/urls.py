@@ -11,6 +11,7 @@ urlpatterns = [
 
     url(r"^reading/(?P<secret_key>[0-9a-f-]+)/$",
         views.ReadingListDetailView.as_view(), name="reading_list"),
+
     url(r"^reading/create/$",
         views.ReadingListCreateView.as_view(), name="reading_list_create"),
     url(r"^reading/update/(?P<secret_key>[0-9a-f-]+)/$",
@@ -33,6 +34,13 @@ urlpatterns = [
 
     url(r"^vocabulary/(?P<secret_key>[0-9a-f-]+)/$",
         views.VocabularyListDetailView.as_view(), name="vocabulary_list"),
+
+    url(r"^vocabulary/create/$",
+        views.VocabularyListCreateView.as_view(), name="vocabulary_list_create"),
+    url(r"^vocabulary/update/(?P<secret_key>[0-9a-f-]+)/$",
+        views.VocabularyListUpdateView.as_view(), name="vocabulary_list_update"),
+    url(r"^vocabulary/delete/(?P<secret_key>[0-9a-f-]+)/$",
+        views.VocabularyListDeleteView.as_view(), name="vocabulary_list_delete"),
 
     url(r"^vocablary/clone/(?P<secret_key>[0-9a-f-]+)/$",
         views.VocabularyListCloneView.as_view(), name="vocabulary_list_clone"),

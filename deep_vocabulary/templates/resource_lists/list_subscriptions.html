@@ -1,64 +1,57 @@
-{% extends "site_base.html" %}
+{% extends "resource_lists/base.html" %}
 
 {% block head_title %}Resource List Subscriptions{% endblock %}
 
-{% block body_base %}
-  <section class="resource-lists hero">
-    <div class="container">
-      <h1>Resource List Subscriptions</h1>
-    </div>
-  </section>
+{% block hero %}
+  <h1>List Subscriptions</h1>
+{% endblock %}
 
-  <section class="resource-lists content u-flex-parent">
-    {% include "resource_lists/includes/_nav.html" %}
-    <div class="container">
-      {% if reading_list_subscriptions %}
-        <p>
-          Show: <b>Reading List Subscriptions </b>
-          | <a href="{% url 'vocabulary_list_subscriptions' request.user.pk %}">Vocabulary List Subscriptions</a>
-        </p>
-      {% else %}
-        <p>
-          Show: <a href="{% url 'reading_list_subscriptions' request.user.pk %}">Reading List Subscriptions</a>
-          | <b>Vocabulary List Subscriptions</b>
-        </p>
-      {% endif %}
+{% block resource_lists_body %}
+  {% if reading_list_subscriptions %}
+    <p>
+      Show: <b>Reading List Subscriptions </b>
+      | <a href="{% url 'vocabulary_list_subscriptions' request.user.pk %}">Vocabulary List Subscriptions</a>
+    </p>
+  {% else %}
+    <p>
+      Show: <a href="{% url 'reading_list_subscriptions' request.user.pk %}">Reading List Subscriptions</a>
+      | <b>Vocabulary List Subscriptions</b>
+    </p>
+  {% endif %}
 
-      {% for subscription in subscriptions %}
-        {% with secret_key=subscription.resource_list.secret_key %}
-          <div class="text-group">
-            <h4>
-                {% if reading_list_subscriptions %}
-                  <a href="{% url 'reading_list' secret_key %}">
-                    {{ subscription.resource_list.title }}
-                  </a>
-                {% else %}
-                  <a href="{% url 'vocabulary_list' secret_key %}">
-                    {{ subscription.resource_list.title }}
-                  </a>
-                {% endif %}
-            </h4>
+  {% for subscription in subscriptions %}
+    {% with secret_key=subscription.resource_list.secret_key %}
+      <div class="text-group">
+        <h4>
+            {% if reading_list_subscriptions %}
+              <a href="{% url 'reading_list' secret_key %}">
+                {{ subscription.resource_list.title }}
+              </a>
+            {% else %}
+              <a href="{% url 'vocabulary_list' secret_key %}">
+                {{ subscription.resource_list.title }}
+              </a>
+            {% endif %}
+        </h4>
 
-            <div class="row">
-              <div class="col">
-                <h5><tt>{{ secret_key }}</tt></h5>
-              </div>
-              <div class="col-md-2">
-                {% if reading_list_subscriptions %}
-                  <a href="{% url 'reading_list' secret_key %}" target="_blank">
-                    browse <i class="fa fa-external-link"></i>
-                  </a>
-                {% else %}
-                  <a href="{% url 'vocabulary_list' secret_key %}" target="_blank">
-                    browse <i class="fa fa-external-link"></i>
-                  </a>
-                {% endif %}
-              </div>
-            </div>
+        <div class="row">
+          <div class="col">
+            <h5><tt>{{ secret_key }}</tt></h5>
           </div>
-        {% endwith %}
+          <div class="col-md-2">
+            {% if reading_list_subscriptions %}
+              <a href="{% url 'reading_list' secret_key %}" target="_blank">
+                browse <i class="fa fa-external-link"></i>
+              </a>
+            {% else %}
+              <a href="{% url 'vocabulary_list' secret_key %}" target="_blank">
+                browse <i class="fa fa-external-link"></i>
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endwith %}
 
-      {% endfor %}
-    </div>
-  </section>
+  {% endfor %}
 {% endblock %}

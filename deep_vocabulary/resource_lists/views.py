@@ -27,8 +27,7 @@ class BaseListsView(ListView):
         if self.user_pk:
             if int(self.user_pk) == self.request.user.pk:
                 return super().get_queryset().filter(owner=self.user_pk)
-            else:
-                raise PermissionDenied(self.request)
+            raise PermissionDenied(self.request)
         return super().get_queryset().filter(owner__isnull=True)
 
     def get_context_data(self, **kwargs):
