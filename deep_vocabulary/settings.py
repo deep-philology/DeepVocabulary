@@ -18,6 +18,7 @@ DATABASES = {
 ALLOWED_HOSTS = [
     "localhost",
     "vocab.perseus.org",
+    "vocab-dev.perseus.org",
 ]
 host_domain = os.environ.get("GONDOR_INSTANCE_DOMAIN")
 if host_domain:
