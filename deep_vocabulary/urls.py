@@ -34,6 +34,8 @@ urlpatterns = [
 
     url(r"^rr/(?P<cts_urn>[^/]+)/$", reader_redirect, name="reader_redirect"),
 
+    url(r"^\.well-known/", include("letsencrypt.urls")),
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

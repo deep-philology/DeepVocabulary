@@ -149,6 +149,7 @@ INSTALLED_APPS = [
     "pinax.webanalytics",
     "raven.contrib.django.raven_compat",
     "corsheaders",
+    "letsencrypt",
 
     # project
     "deep_vocabulary",
@@ -234,6 +235,9 @@ AUTHENTICATION_BACKENDS = [
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = bool(int(os.environ.get("SECURE_SSL_REDIRECT", "0")))
+SECURE_REDIRECT_EXEMPT = [
+    r"\.well-known/acme-challenge/.+",
+]
 
 if "SENTRY_DSN" in os.environ:
     RAVEN_CONFIG = {
