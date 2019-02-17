@@ -19,10 +19,8 @@ ALLOWED_HOSTS = [
     "localhost",
     "vocab.perseus.org",
     "vocab-dev.perseus.org",
+    ".herokuapp.com"
 ]
-host_domain = os.environ.get("GONDOR_INSTANCE_DOMAIN")
-if host_domain:
-    ALLOWED_HOSTS.append(host_domain)
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

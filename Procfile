@@ -1,1 +1,1 @@
-web: gunicorn --bind=0.0.0.0 --log-file=- deep_vocabulary.wsgi
+web: gunicorn --log-file=- deep_vocabulary.wsgi
