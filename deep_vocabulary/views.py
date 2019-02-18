@@ -1,6 +1,7 @@
 from operator import itemgetter
 from urllib.parse import urlencode
 
+from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator, Page
 from django.core.urlresolvers import reverse
 from django.db.models import Q, Sum
@@ -415,7 +416,7 @@ def lemma_json(request):
 
 
 def reader_redirect(request, cts_urn):
-    SCAIFE_HOST = "https://scaife.eldarion.com"
+    SCAIFE_HOST = settings.SCAIFE_HOST
     if len(cts_urn.split(":")) == 4:
         return redirect(f"{SCAIFE_HOST}/library/{cts_urn}/")
     elif len(cts_urn.split(":")) == 5:
