@@ -1,8 +1,0 @@
-cluster: us1
-site: perseus/deep-vocabulary
-buildpack: https://github.com/heroku/heroku-buildpack-multi.git
-branches:
-  master: primary
-deploy:
-  services:
-  - web

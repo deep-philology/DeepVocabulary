@@ -19,10 +19,8 @@ ALLOWED_HOSTS = [
     "localhost",
     "vocab.perseus.org",
     "vocab-dev.perseus.org",
+    ".herokuapp.com"
 ]
-host_domain = os.environ.get("GONDOR_INSTANCE_DOMAIN")
-if host_domain:
-    ALLOWED_HOSTS.append(host_domain)
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -248,6 +246,8 @@ if "SENTRY_DSN" in os.environ:
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r"^.*/json/$"
+
+SCAIFE_HOST = os.environ.get("SCAIFE_HOST", "https://scaife.perseus.org")
 
 OIDC_HOST = os.environ.get("OIDC_HOST", "http://localhost:3000")
 OIDC_RP_CLIENT_ID = os.environ.get("OIDC_RP_CLIENT_ID")
