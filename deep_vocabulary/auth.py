@@ -29,6 +29,7 @@ class PinaxOIDCAuthenticationBackend(OIDCAuthenticationBackend):
         })
         if claims.get("email_verified", False):
             EmailAddress.objects.create(
+                user=user,
                 email=user.email,
                 verified=True,
                 primary=True,
